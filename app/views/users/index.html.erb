@@ -1,32 +1,25 @@
 <% provide(:title, 'All Users') %>
 <h1>ユーザー一覧</h1>
 
-<div class="col-md-4 col-md-offset-1">
+<div class="col-sm-4 col-md-offset-1">
   <%= form_tag import_users_path, multipart: true do %>
     <%= file_field_tag :file %>
-    <%= submit_tag "CSVをインポート" %>
+    <%= submit_tag "CSVをインポート", class: "btn btn-primary btn-block", id: "import_button" %>
   <% end %>
+</div>
 
 <div class="col-md-10 col-md-offset-1">
-  <%= will_paginate %>
   <table class="table table-condensed table-hover" id="table-users">
-    <thead>
-      <tr>
-        <th><%= User.human_attribute_name :name %></th>
-        <th class="center"><%= User.human_attribute_name :department %></th>
-        <% if current_user.admin? %>
-          <th class="center"><%= User.human_attribute_name :basic_time %></th>
-          <th class="center"><%= User.human_attribute_name :work_time %></th>
-        <% end %>
-        <th></th>
-      </tr>
-    </thead>
-
     <% @users.each do |user| %>
       <tr>
         <td><%= link_to user.name, user %></td>
+        <td>
+          <%= link_to "削除", user, method: :delete,
+                data: { confirm: "削除してよろしいですか？" },
+                class: "btn btn-primary" %>
+        </td>
+        <td></td>
       </tr>
     <% end %>
   </table>
-  <%= will_paginate %>
 </div>

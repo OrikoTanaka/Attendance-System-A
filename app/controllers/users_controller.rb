@@ -1,11 +1,11 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update]
-  before_action :logged_in_user, only: [:index, :show, :edit, :update]
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: [:index, :edit_basic_info, :update_basic_info]
+  before_action :admin_user, only: [:index, :edit_basic_info, :update_basic_info, :destroy]
 
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.all
   end
 
   def import
@@ -51,6 +51,12 @@ class UsersController < ApplicationController
   def update_basic_info
   end
   
+  def destroy
+    @user.destroy
+    flash[:success] = "#{@user.name}のデータを削除しました。"
+    redirect_to users_url
+  end
+
   private
   
     def user_params
