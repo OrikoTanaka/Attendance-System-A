@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20220910020722) do
+ActiveRecord::Schema.define(version: 20220911150507) do
 
   create_table "users", force: :cascade do |t|
     t.string "name"
@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 20220910020722) do
     t.string "affiliation"
     t.datetime "basic_time", default: "2022-09-09 23:00:00"
     t.datetime "work_time", default: "2022-09-09 22:30:00"
-    t.integer "employee_nunmber"
+    t.integer "employee_number"
     t.string "uid"
     t.datetime "basic_work_time", default: "2022-09-09 23:00:00"
     t.datetime "designated_work_start_time"
