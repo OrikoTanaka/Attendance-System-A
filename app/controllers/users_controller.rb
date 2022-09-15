@@ -62,31 +62,7 @@ class UsersController < ApplicationController
       params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
     end
 
-    # before フィルター
-
-    def set_user
-      @user = User.find(params[:id])
-    end
-
     def basic_info_params
       params.require(:user).permit(:affiliation, :basic_time, :work_time)
-    end
-
-    def logged_in_user
-      unless logged_in?
-        store_location
-        flash[:danger] = "ログインしてください。"
-        redirect_to login_url
-      end
-    end
-
-    def correct_user
-      @user = User.find(params[:id])
-      redirect_to root_url unless current_user?(@user)
-    end
-
-    # システム管理権限所有かどうか判定します。
-    def admin_user
-      redirect_to root_url unless current_user.admin?
     end
 end
