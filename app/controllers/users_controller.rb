@@ -11,6 +11,7 @@ class UsersController < ApplicationController
 
   def import
     User.import(params[:file])
+    redirect_to action: ‘index’
   end
   
   def show
