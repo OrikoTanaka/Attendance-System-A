@@ -11,9 +11,9 @@ class UsersController < ApplicationController
 
   def import
     User.import(params[:file])
-    redirect_to action: ‘index’
+    redirect_to users_url
   end
-  
+ 
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
   end
@@ -45,10 +45,10 @@ class UsersController < ApplicationController
     end
   end
 
-  def edit_basic_info
+  def edit_user_info
   end
 
-  def update_basic_info
+  def update_user_info
   end
   
   def destroy
