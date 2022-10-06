@@ -56,6 +56,10 @@ class UsersController < ApplicationController
       render:index
     end
   end
+
+  def working_list
+    @working_users = User.working_users
+  end
   
   def destroy
     @user.destroy
