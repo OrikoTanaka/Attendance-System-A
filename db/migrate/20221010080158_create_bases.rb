@@ -1,8 +1,9 @@
 class CreateBases < ActiveRecord::Migration[5.1]
   def change
     create_table :bases do |t|
+      t.integer :base_number
       t.string :name
-      t.string :type
+      t.string :attendance_type
 
       t.timestamps
     end

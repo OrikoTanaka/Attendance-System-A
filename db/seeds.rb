@@ -44,7 +44,9 @@ User.create!(name: "上長B",
 
 puts "Users Created" # db:seedを実行した最後に表示させる
 
-Base.create!(name: "拠点A")
+Base.create!(name: "拠点A", 
+    base_number: "1",
+    attendance_type: "出勤")
 
 puts "Bases Created"
 

@@ -1,0 +1,34 @@
+<% provide(:title, "拠点一覧") %>
+<h1>拠点一覧</h1>
+
+<div>
+  <table class="table table-bordered table-condensed user-table">
+    <tr>
+      <td></td>
+      <td></td>
+      <td>拠点番号</td>
+      <td>拠点名</td>
+      <td>勤怠種類</td>
+    </tr>
+
+    <% @bases.each do |base| %>
+      <tr>
+        <td>
+          <%= link_to "修正", edit_basis_path(base), remote: true, class: "btn btn-primary" %>
+        </td>
+        <td>
+          <%= link_to "削除", base, method: :delete,
+                      data: { confirm: "削除してよろしいですか？" },
+                      class: "btn btn-primary" %>
+        </td>
+        <td><%= base.base_number %></td>
+        <td><%= base.name %></td>
+        <td><%= base.attendance_type %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+<!--モーダルウインドウ表示-->
+<div id="edit-bases-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
