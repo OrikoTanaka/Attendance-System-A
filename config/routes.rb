@@ -21,4 +21,8 @@ Rails.application.routes.draw do
     end
     resources :attendances, only: :update
   end
+
+  # 拠点情報機能
+  resources :bases do
+  end
 end
