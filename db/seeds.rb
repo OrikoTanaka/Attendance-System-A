@@ -42,4 +42,9 @@ User.create!(name: "上長B",
 #       password_confirmation: password)
 # end
 
-puts "Users Created"
+puts "Users Created" # db:seedを実行した最後に表示させる
+
+Base.create!(name: "拠点A")
+
+puts "Bases Created"
+
