@@ -58,7 +58,11 @@ class UsersController < ApplicationController
   end
 
   def working_list
-    @working_users = User.working_users
+    # 条件に合致する勤怠データを絞ってからuserと関連づける。
+    @in_attendances = Attendance.where(worked_on: Date.current)
+                         .where(finished_at: nil)
+                         .where.not(started_at: nil)
+                         .includes(:user)
   end
   
   def destroy

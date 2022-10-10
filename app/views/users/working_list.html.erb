@@ -8,11 +8,11 @@
       <td>名前</td>
     </tr>
 
-    <% @working_users.each do |working_user| %>
-    <tr>
-      <td><%= working_user.employee_number %></td>
-      <td><%= working_user.name %></td>
-    </tr>
+    <% @in_attendances.each do |in_attendance| %>
+      <tr>
+        <td><%= in_attendance.user.employee_number %></td>
+        <td><%= in_attendance.user.name %></td>
+      </tr>
     <% end %>
   </table>
 </div>

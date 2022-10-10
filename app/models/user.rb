@@ -69,10 +69,4 @@ class User < ApplicationRecord
     "basic_work_time", "designated_work_start_time", "designated_work_end_time",
     "superior", "admin", "password"]
   end
-
-  # 出勤中社員の定義
-  def self.working_users
-    working_users = Attendance.where(worked_on: Date.today, finished_at: nil)
-                    .where.not(started_at: nil).pluck(:user_id).uniq
-  end
 end
