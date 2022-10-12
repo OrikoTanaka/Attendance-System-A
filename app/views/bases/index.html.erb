@@ -14,7 +14,7 @@
     <% @bases.each do |base| %>
       <tr>
         <td>
-          <%= link_to "修正", edit_basis_path(base), remote: true, class: "btn btn-primary" %>
+          <%= link_to "修正", edit_bases_info_basis_path(base), remote: true, class: "btn btn-primary" %>
         </td>
         <td>
           <%= link_to "削除", base, method: :delete,
@@ -33,19 +33,12 @@
 <div id="edit-bases-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
 <p>
-  <div class="panel-group">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" href="#collapse1">拠点情報追加</a>
-      </h4>
-    </div>
-    <div id="collapse1" class="panel-collapse collapse">
-      <div class="panel-body">
-        <%= render 'form' %>
-      </div>
-    </div>
+  <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo">
+    拠点情報追加
+  </button>
+  <div id="demo" class="collapse">
+    <%= render 'form' %>
   </div>
-</div>
+    
 
 

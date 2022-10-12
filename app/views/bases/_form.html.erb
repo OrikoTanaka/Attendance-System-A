@@ -1,18 +1,19 @@
-<% provide(:title, "New") %>
-<% provide(:class_text, 'user--new') %>
+<% provide(:title, "拠点新規作成") %>
+<% provide(:class_text, 'base--new') %>
 <% provide(:button_text, '新規作成') %>
 
 <%= form_with(model: @base, url: bases_path, local: true, method: :post) do |f| %>
-  <%= render 'shared/error_messages', object: @base %>
-
+ 
   <%= f.label :name, class: "label-#{yield(:class_text)}" %>
   <%= f.text_field :name, class: "form-control" %>
 
   <%= f.label :base_number, class: "label-#{yield(:class_text)}" %>
-  <%= f.text_field :base_number, class: "form-control" %>
+  <%= f.number_field :base_number, class: "form-control" %>
 
-  <%= f.label :attendance_type, class: "label-#{yield(:class_text)}" %>
-  <%= f.text_field :attendance_type, class: "form-control" %>
+  <%= f.label :attendance_type, class: "label-#{yield(:class_text)}" %><br>
+  <div class="form-select">
+    <%= f.select :attendance_type, ["出勤", "退勤"], class: "form-control" %>
+  </div>
   
   <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
 <% end %>

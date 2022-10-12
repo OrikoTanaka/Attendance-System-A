@@ -24,5 +24,10 @@ Rails.application.routes.draw do
   end
 
   # 拠点情報機能
-  resources :bases
+  resources :bases do
+    member do
+      get 'edit_bases_info'
+      patch 'update_bases_info'
+    end
+  end
 end
