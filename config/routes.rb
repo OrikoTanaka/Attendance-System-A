@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
-  get 'bases/index'
-
+  
   root 'static_pages#top'
   get '/signup', to: 'users#new'
 
@@ -19,6 +18,7 @@ Rails.application.routes.draw do
     collection do
       post 'import' # csvインポート
       get 'working_list' # 出勤社員一覧ページ
+      get 'edit_basic_info' # 基本情報修正ページ
     end
     resources :attendances, only: :update
   end
@@ -30,4 +30,6 @@ Rails.application.routes.draw do
       patch 'update_bases_info'
     end
   end
+
+  
 end

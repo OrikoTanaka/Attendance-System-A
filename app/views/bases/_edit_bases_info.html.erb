@@ -16,7 +16,7 @@
             <%= render 'shared/error_messages', object: @base %>
 
             <%= f.label :拠点名, class: "label-#{yield(:class_text)}" %>
-            <p><%= @base.name %></p>
+            <%= f.text_field :name, class: "form-control" %>
 
             <%= f.label :拠点番号, class: "label-#{yield(:class_text)}" %>
             <%= f.number_field :base_number, class: "form-control" %>

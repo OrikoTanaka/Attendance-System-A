@@ -36,6 +36,9 @@ class BasesController < ApplicationController
   end
 
   def destroy
+    @base.destroy
+    flash[:success] = "#{@base.name}のデータを削除しました。"
+    redirect_to bases_url
   end
 
   private

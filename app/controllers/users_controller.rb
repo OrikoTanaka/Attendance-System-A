@@ -65,6 +65,9 @@ class UsersController < ApplicationController
                          .includes(:user)
   end
   
+  def edit_basic_info
+  end
+  
   def destroy
     @user.destroy
     flash[:success] = "#{@user.name}のデータを削除しました。"

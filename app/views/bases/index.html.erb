@@ -17,7 +17,7 @@
           <%= link_to "修正", edit_bases_info_basis_path(base), remote: true, class: "btn btn-primary" %>
         </td>
         <td>
-          <%= link_to "削除", base, method: :delete,
+          <%= link_to "削除", basis_path(base), method: :delete,
                       data: { confirm: "削除してよろしいですか？" },
                       class: "btn btn-primary" %>
         </td>
