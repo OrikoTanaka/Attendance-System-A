@@ -8,19 +8,26 @@
         <%= link_to "→", user_path(date: @first_day.next_month), class: "btn btn-primary" %>
       </td>
       <td>指定勤務開始時間</td>
-      <td colspan="3">基本時間：<%= format_basic_info(@user.basic_work_time) %></td>
+      <td colspan="3">基本時間　<%= format_basic_info(@user.basic_work_time) %></td>
       <td>初日　<%= l(@first_day, format: :short) %></td>
     </tr>
     <tr>
-      <td>所属：<%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
-      <td>名前：<%= @user.name %></td>
+      <td>所属　<%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
+      <td>名前　<%= @user.name %></td>
       <td>コード</td>
-      <td></td>
-      <td>出勤日数<%= @worked_sum %>日</td>
+      <td><%= @user.employee_number %></td>
+      <td>出勤日数　<%= @worked_sum %>日</td>
       <td>締め　<%= l(@last_day, format: :short) %></td>
     </tr>
   </table>
 </div>
+
+<div class="row">
+<%= link_to "【 所属長承認申請のお知らせ 】", '#' %><br>
+<%= link_to "【 勤怠変更申請のお知らせ 】", '#' %><br>
+<%= link_to "【 残業申請のお知らせ 】", '#' %><br>
+</div>
+
 <div class="btn-users-show">
   <%= link_to "勤怠編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
   <%= link_to "CSV出力", '#', class: "btn btn-primary" %>
