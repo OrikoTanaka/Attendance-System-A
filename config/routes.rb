@@ -20,7 +20,12 @@ Rails.application.routes.draw do
       get 'working_list' # 出勤社員一覧ページ
       get 'edit_basic_info' # 基本情報修正ページ
     end
-    resources :attendances, only: :update
+    resources :attendances do
+      member do
+        get 'request_overtime' # 残業申請モーダル
+        patch 'update_overtime' 
+      end
+    end
   end
 
   # 拠点情報機能

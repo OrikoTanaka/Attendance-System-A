@@ -1,2 +1,45 @@
 <% provide(:class_text, 'request_overtime') %>
 <% provide(:button_text, '変更を送信する') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+      <h4 class="modal-title">【　残業申請　】</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <%= form_with(model: @user, url: update_overtime_user_attendance_path, local: true, method: :patch) do |f| %>
+            <table class="table table-bordered table-striped table-position table-hover">
+              <thead>
+                <tr>
+                  <td><%= Attendance.human_attribute_name :worked_on %></td>
+                  <td><%= I18n.t('day_name') %></td>
+                  <td><%= "終了予定時間" %></td>
+                  <td><%= "翌日" %></td>
+                  <td><%= "業務処理内容" %></td>
+                  <td><%= "指示者確認㊞" %></td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><%= l(day.worked_on, format: :short) %></td>
+                  <td class='<%= "wday#{day.worked_on.wday}"%>'>
+                    <%= $days_of_the_week[day.worked_on.wday] %>
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
