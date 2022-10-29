@@ -109,3 +109,10 @@ p {
 .modal-dialog-center {
   padding-top: 10%;
 }
+
+.modal-body {
+  td {
+    vertical-align: middle;
+    text-align: center;
+  }
+}
