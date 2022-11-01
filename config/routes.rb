@@ -23,7 +23,7 @@ Rails.application.routes.draw do
     resources :attendances do
       member do
         get 'request_overtime' # 残業申請モーダル
-        patch 'update_overtime' 
+        patch 'update_request_overtime' 
       end
     end
   end

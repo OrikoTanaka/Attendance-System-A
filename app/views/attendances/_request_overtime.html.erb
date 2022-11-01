@@ -35,7 +35,7 @@
                     <td><%= attendance.check_box :nextday %></td>
                     <td><%= attendance.text_field :overtime_reason, class: "form-control"%></td>
                     <td>
-                      <%= attendance.select :confirmer, [["上長A", "上長A"], ["上長B", "上長B"]], include_blank: "" %> 
+                      <%= attendance.select :confirmer, @superiors.map{ |superior| [superior.name] }, include_blank: "" %> 
                     </td>                    
                   </tr>
                 <% end %>             
