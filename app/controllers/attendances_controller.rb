@@ -61,11 +61,11 @@ class AttendancesController < ApplicationController
       end
     end
     flash[:success] = "残業を申請しました。"
-    redirect_to user_url
+    redirect_to user_url(current_user)
 
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "無効な入力データがあります。もう一度入力してください。"
-    redirect_to request_overtime_user_attendance_url(date: params[:date])
+    flash[:danger] = "無効な入力データがあります。やり直してください。"
+    redirect_to user_url(current_user)
 
   end
 
@@ -77,6 +77,6 @@ class AttendancesController < ApplicationController
 
     # 残業申請情報
     def request_overtime_params
-      params.require(:user).permit(attendances: [:end_time, :nextday, :overtime_reason, :confirmer])[:attendances]
+      params.require(:user).permit(attendances: [:worked_on, :end_time, :nextday, :overtime_reason, :confirmer])[:attendances]
     end
 end
