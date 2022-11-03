@@ -53,17 +53,15 @@ class AttendancesController < ApplicationController
 
   # 残業申請送信
   def update_request_overtime
+    @user = User.find(params[:user_id])
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       request_overtime_params.each do |id, item|
         attendance = Attendance.find(id)
-        if attendance.nextday
-          
-        end
         attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
       end
     end
     flash[:success] = "残業を申請しました。"
-    redirect_to user_url(date: params[:date])
+    redirect_to user_url
 
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあります。もう一度入力してください。"
@@ -81,3 +79,4 @@ class AttendancesController < ApplicationController
     def request_overtime_params
       params.require(:user).permit(attendances: [:end_time, :nextday, :overtime_reason, :confirmer])[:attendances]
     end
+end
