@@ -58,13 +58,14 @@ class AttendancesController < ApplicationController
       request_overtime_params.each do |id, item|
         attendance = Attendance.find(id)
         attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
+        attendance.save!(context: :update_request_overtime) # 入力項目のバリデーション実行
       end
     end
     flash[:success] = "残業を申請しました。"
     redirect_to user_url(current_user)
 
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "無効な入力データがあります。やり直してください。"
+    flash[:danger] = "入力が足りません。やり直してください。"
     redirect_to user_url(current_user)
 
   end
