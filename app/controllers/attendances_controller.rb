@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month 
@@ -57,6 +57,7 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       request_overtime_params.each do |id, item|
         attendance = Attendance.find(id)
+        attendance.overtime_request_status = "申請中"
         attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
         attendance.save!(context: :update_request_overtime) # 入力項目のバリデーション実行
       end
@@ -70,6 +71,16 @@ class AttendancesController < ApplicationController
 
   end
 
+  # 残業申請のお知らせモーダル
+  def notice_overtime
+    @attendances = Attendance.where(overtime_request_status: "申請中", confirmer: @user.name)
+                             .order(:user_id, :worked_on).group_by(&:user_id)
+  end
+
+  # 残業申請のお知らせ更新
+  def update_notice_overtime
+  end
+
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
@@ -78,6 +89,6 @@ class AttendancesController < ApplicationController
 
     # 残業申請情報
     def request_overtime_params
-      params.require(:user).permit(attendances: [:worked_on, :end_time, :nextday, :overtime_reason, :confirmer])[:attendances]
+      params.require(:user).permit(attendances: [:worked_on, :end_time, :nextday, :overtime_reason, :confirmer, :overtime_request_status])[:attendances]
     end
 end

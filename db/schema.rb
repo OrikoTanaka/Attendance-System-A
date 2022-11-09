@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20221029054442) do
+ActiveRecord::Schema.define(version: 20221106050850) do
 
   create_table "attendances", force: :cascade do |t|
     t.date "worked_on"
@@ -20,10 +20,11 @@ ActiveRecord::Schema.define(version: 20221029054442) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.time "end_time" # 残業終了予定時間
-    t.string "overtime_reason" # 業務処理内容
-    t.boolean "nextday", default: false # 翌日
-    t.string "confirmer" # 指示者確認印
+    t.time "end_time"
+    t.string "overtime_reason"
+    t.boolean "nextday", default: false
+    t.string "confirmer"
+    t.string "overtime_request_status"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -41,9 +42,9 @@ ActiveRecord::Schema.define(version: 20221029054442) do
     t.string "affiliation"
     t.integer "employee_number"
     t.string "uid"
-    t.time "basic_work_time", default: "2000-01-01 23:00:00" # 基本勤務時間
-    t.time "designated_work_start_time", default: "2000-01-01 00:00:00" # 指定勤務開始時間
-    t.time "designated_work_end_time", default: "2000-01-01 09:00:00" # 指定勤務終了時間
+    t.time "basic_work_time", default: "2000-01-01 23:00:00"
+    t.time "designated_work_start_time", default: "2000-01-01 00:00:00"
+    t.time "designated_work_end_time", default: "2000-01-01 09:00:00"
     t.boolean "superior", default: false
     t.boolean "admin", default: false
     t.datetime "created_at", null: false

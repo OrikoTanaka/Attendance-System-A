@@ -26,7 +26,7 @@
   <div class="row">
   <%= link_to "【 所属長承認申請のお知らせ 】", '#' %><br>
   <%= link_to "【 勤怠変更申請のお知らせ 】", '#' %><br>
-  <%= link_to "【 残業申請のお知らせ 】", '#' %><br>
+  <%= link_to "【 残業申請のお知らせ 】", notice_overtime_user_attendance_path(current_user) %><br>
   </div>
 <% end %>
 
@@ -99,9 +99,13 @@
           <td><%= day.note %></td>
           <td><%= l(day.end_time, format: :hour) if day.end_time.present? %></td>
           <td><%= l(day.end_time, format: :minute) if day.end_time.present? %></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td>
+            <% if day.end_time.present? %>
+              <%= day.overtime_calculation(@user.designated_work_end_time) %>
+            <% end %>
+          </td>
+          <td><%= day.overtime_reason %></td>
+          <td><%= day.overtime_request_status %></td>
         </tr>
       <% end %>
     </tbody>
@@ -122,3 +126,6 @@
 
 <!--残業申請モーダルウインドウ表示-->
 <div id="request-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+<!-- 残業申請のお知らせモーダルウィンドウ表示 -->
+<div id="notice-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
