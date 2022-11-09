@@ -105,7 +105,11 @@
             <% end %>
           </td>
           <td><%= day.overtime_reason %></td>
-          <td><%= day.overtime_request_status %></td>
+          <td>
+            <% if day.overtime_request_status.present? %>
+              <%= day.confirmer %> へ <%= day.overtime_request_status %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>

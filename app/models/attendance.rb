@@ -31,8 +31,8 @@ class Attendance < ApplicationRecord
 
   # 残業終了時間と指定勤務終了時間を受け取り、残業時間を計算して返します。
  def overtime_calculation(designated_work_end_time)
-  if nextday # 翌日にチェックがあれば残業終了時間に１日足して計算する
-    format("%.2f", (((self.end_time + 1.days - designated_work_end_time) / 60) / 60.0))
+  if nextday # 翌日にチェック(true)があれば残業終了時間に１日足して計算する 
+    format("%.2f", (((self.end_time - designated_work_end_time) / 60) / 60.0))
   else
     format("%.2f", (((self.end_time - designated_work_end_time) / 60) / 60.0))
   end
