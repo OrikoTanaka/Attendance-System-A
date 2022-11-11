@@ -34,9 +34,9 @@
                     </td>
                     <td><%= attendance.end_time, format: :time %></td>
                     <td><%= @user.designated_work_end_time, format: :time %></td>
-                    <td><%= attendance.overtime_calculation %></td>
+                    <td><%= attendance.overtime_calculation, format: :time %></td>
                     <td><%= attendance.overtime_reason %></td>
-                    <td><%= attendance.confirmer %></td>
+                    <td><%= attendance.select :overtime_request_status %></td>
                     <td><%= attendance.check_box :change %></td>
                     <td><%= link_to "確認", user_path(@user, day), class: "btn btn-primary" %></td>                    
                   </tr>
