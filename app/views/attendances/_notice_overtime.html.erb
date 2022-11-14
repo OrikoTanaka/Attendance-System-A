@@ -28,7 +28,7 @@
                     </tr>
                   </thead>
 
-                  <% @attendance_lists.where(user_id: request_user.id).each do |ats| %>
+                  <% @attendance_lists.each do |ats| %>
                     <%= f.fields_for "attendances[]", ats do |at| %>
                     <tbody>
                       <tr>
