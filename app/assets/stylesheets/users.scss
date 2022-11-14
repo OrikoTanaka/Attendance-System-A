@@ -71,3 +71,16 @@
 .btn-user--info {
   margin-top: 10px;
 }
+
+/* 残業申請のお知らせ */
+
+.notice-overtime {
+  color: red;
+  text-decoration: none;
+  display:flex;
+}
+
+span{
+  border: solid 1px red;
+  font-weight: bold;
+}

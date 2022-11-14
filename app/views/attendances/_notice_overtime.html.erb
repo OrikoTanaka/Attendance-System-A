@@ -7,43 +7,48 @@
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
       </button>
-      <h2 class="modal-title">【　#{@user.name}からの残業申請　】</h2>
     </div>
+
     <div class="modal-body">
       <div class="row">
         <div class="col-md-12">
           <%= form_with(model: @user, url: update_notice_overtime_user_attendance_path, local: true, method: :patch) do |f| %>
-            <table class="table table-bordered table-striped table-position table-hover">
-              <thead>
-                <tr>
-                  <td><%= "日付" %></td>
-                  <td><%= "曜日" %></td>
-                  <td class="col-sm-2"><%= "終了予定時間" %></td>
-                  <td class="col-sm-5"><%= "業務処理内容" %></td>
-                  <td><%= "指示者確認㊞" %></td>
-                  <td><%= "変更" %></td>
-                  <td><%= "勤怠を確認する" %></td>
-                </tr>
-              </thead>
-              <tbody>
-                <%= f.fields_for "attendances[]", @attendance do |attendance| %>
-                  <tr>
-                    <td><%= l(@attendance.worked_on, format: :short) %></td>
-                    <td class='<%= "wday#{@attendance.worked_on.wday}"%>'>
-                      <%= $days_of_the_week[@attendance.worked_on.wday] %>
-                    </td>
-                    <td><%= attendance.end_time, format: :time %></td>
-                    <td><%= @user.designated_work_end_time, format: :time %></td>
-                    <td><%= attendance.overtime_calculation, format: :time %></td>
-                    <td><%= attendance.overtime_reason %></td>
-                    <td><%= attendance.select :overtime_request_status %></td>
-                    <td><%= attendance.check_box :change %></td>
-                    <td><%= link_to "確認", user_path(@user, day), class: "btn btn-primary" %></td>                    
-                  </tr>
-                <% end %>             
-              </tbody>
-            </table>
+            <% @request_users.each do |request_user| %>
+              <h4 class="modal-title" style="text-align:center"><%= "【#{request_user.name}からの残業申請】" %></h4>
+                <table class="table table-bordered table-striped table-position table-hover">
+                  <thead>
+                    <tr>
+                      <td><%= "日付" %></td>
+                      <td><%= "曜日" %></td>
+                      <td class="col-sm-2"><%= "終了予定時間" %></td>
+                      <td class="col-sm-5"><%= "業務処理内容" %></td>
+                      <td><%= "指示者確認㊞" %></td>
+                      <td><%= "変更" %></td>
+                      <td><%= "勤怠を確認する" %></td>
+                    </tr>
+                  </thead>
 
+                  <% @attendance_lists.where(user_id: request_user.id).each do |ats| %>
+                    <%= f.fields_for "attendances[]", ats do |at| %>
+                    <tbody>
+                      <tr>
+                        <td><%= l(ats.worked_on, format: :short) %></td>
+                        <td class='<%= "wday#{ats.worked_on.wday}"%>'>
+                          <%= $days_of_the_week[ats.worked_on.wday] %>
+                        </td>
+                        <td><%= l(ats.end_time, format: :time) %></td>
+                        <td><%= l(request_user.designated_work_end_time, format: :time) %></td>
+                        <td><%= l(ats.overtime_calculation, format: :time) %></td>
+                        <td><%= ats.overtime_reason %></td>
+                        <td><%= ats.select :overtime_request_status, include_blank: "申請中" %></td>
+                        <td><%= ats.check_box :change %></td>
+                        <td><%= link_to "確認", user_path(request_user.id, day), class: "btn btn-primary" %></td>                    
+                      </tr>
+                    </tbody>
+                    <% end %>
+                  <% end %>
+                </table>
+            <% end %>
             <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
           
           <% end %>

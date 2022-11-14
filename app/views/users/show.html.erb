@@ -22,12 +22,23 @@
   </table>
 </div>
 
+<!--各種 申請お知らせテーブル-->
 <% if current_user.superior? %>
   <div class="row">
   <%= link_to "【 所属長承認申請のお知らせ 】", '#' %><br>
   <%= link_to "【 勤怠変更申請のお知らせ 】", '#' %><br>
-  <%= link_to "【 残業申請のお知らせ 】", notice_overtime_user_attendance_path(current_user) %><br>
+
+  <% if @request_quantity > 0 %>
+    <div class="notice-overtime">
+      <%= link_to "【 残業申請のお知らせ 】", notice_overtime_user_attendance_path(current_user), remote: true, style:"color:#f00" %>
+      <span><%= @request_quantity %>件の通知があります</span>
+    </div><br>
+  <% else %>
+    <%= "【 残業申請のお知らせ 】" %><br>
+  <% end %>
+  
   </div>
+
 <% end %>
 
 <div class="btn-users-show">
