@@ -28,20 +28,20 @@
                     </tr>
                   </thead>
 
-                  <% @attendance_lists.each do |ats| %>
-                    <%= f.fields_for "attendances[]", ats do |at| %>
+                  <% @attendance_lists.each do |user_id,overtime_attendances| %>
+                    <%= f.fields_for "attendances[]", overtime_attendances do |overtime_attendance| %>
                     <tbody>
                       <tr>
-                        <td><%= l(ats.worked_on, format: :short) %></td>
-                        <td class='<%= "wday#{ats.worked_on.wday}"%>'>
-                          <%= $days_of_the_week[ats.worked_on.wday] %>
+                        <td><%= l(overtime_attendance.worked_on, format: :short) %></td>
+                        <td class='<%= "wday#{overtime_attendance.worked_on.wday}"%>'>
+                          <%= $days_of_the_week[overtime_attendance.worked_on.wday] %>
                         </td>
-                        <td><%= l(ats.end_time, format: :time) %></td>
+                        <td><%= l(overtime_attendance.end_time, format: :time) %></td>
                         <td><%= l(request_user.designated_work_end_time, format: :time) %></td>
-                        <td><%= l(ats.overtime_calculation, format: :time) %></td>
-                        <td><%= ats.overtime_reason %></td>
-                        <td><%= ats.select :overtime_request_status, include_blank: "申請中" %></td>
-                        <td><%= ats.check_box :change %></td>
+                        <td><%= l(overtime_attendance.overtime_calculation, format: :time) %></td>
+                        <td><%= overtime_attendance.overtime_reason %></td>
+                        <td><%= overtime_attendance.select :overtime_request_status, include_blank: "申請中" %></td>
+                        <td><%= overtime_attendance.check_box :change %></td>
                         <td><%= link_to "確認", user_path(request_user.id, day), class: "btn btn-primary" %></td>                    
                       </tr>
                     </tbody>
