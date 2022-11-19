@@ -12,45 +12,46 @@
     <div class="modal-body">
       <div class="row">
         <div class="col-md-12">
-          <%= form_with(model: @user, url: update_notice_overtime_user_attendance_path, local: true, method: :patch) do |f| %>
-            <% @request_users.each do |request_user| %>
-              <h4 class="modal-title" style="text-align:center"><%= "【#{request_user.name}からの残業申請】" %></h4>
-                <table class="table table-bordered table-striped table-position table-hover">
-                  <thead>
-                    <tr>
-                      <td><%= "日付" %></td>
-                      <td><%= "曜日" %></td>
-                      <td class="col-sm-2"><%= "終了予定時間" %></td>
-                      <td class="col-sm-5"><%= "業務処理内容" %></td>
-                      <td><%= "指示者確認㊞" %></td>
-                      <td><%= "変更" %></td>
-                      <td><%= "勤怠を確認する" %></td>
-                    </tr>
-                  </thead>
+          <% @request_users.each do |request_user| %>
+            <h4 class="modal-title" style="text-align:center"><%= "【#{request_user.name}からの残業申請】" %></h4>
+              
+            <%= form_with(model: @user, url: update_notice_overtime_user_attendance_path, local: true, method: :patch) do |f| %>
+              <table class="table table-bordered table-striped table-position table-hover">
+                <thead>
+                  <tr>
+                    <td><%= "日付" %></td>
+                    <td><%= "曜日" %></td>
+                    <td class="col-sm-2"><%= "終了予定時間" %></td>
+                    <td class="col-sm-5"><%= "業務処理内容" %></td>
+                    <td><%= "指示者確認㊞" %></td>
+                    <td><%= "変更" %></td>
+                    <td><%= "勤怠を確認する" %></td>
+                  </tr>
+                </thead>
 
-                  <% @attendance_lists.each do |user_id,overtime_attendances| %>
-                    <%= f.fields_for "attendances[]", overtime_attendances do |overtime_attendance| %>
+                <% @attendance_lists[request_user.id].each do |oa| %>
+                  <%= f.fields_for @attendance_lists[request_user.id] do |at| %>
                     <tbody>
                       <tr>
-                        <td><%= l(overtime_attendance.worked_on, format: :short) %></td>
-                        <td class='<%= "wday#{overtime_attendance.worked_on.wday}"%>'>
-                          <%= $days_of_the_week[overtime_attendance.worked_on.wday] %>
+                        <td><%= l(oa.worked_on, format: :short) %></td>
+                        <td class='<%= "wday#{at.worked_on.wday}"%>'>
+                          <%= $days_of_the_week[at.worked_on.wday] %>
                         </td>
-                        <td><%= l(overtime_attendance.end_time, format: :time) %></td>
+                        <td><%= l(at.end_time, format: :time) %></td>
                         <td><%= l(request_user.designated_work_end_time, format: :time) %></td>
-                        <td><%= l(overtime_attendance.overtime_calculation, format: :time) %></td>
-                        <td><%= overtime_attendance.overtime_reason %></td>
-                        <td><%= overtime_attendance.select :overtime_request_status, include_blank: "申請中" %></td>
-                        <td><%= overtime_attendance.check_box :change %></td>
+                        <td><%= l(at.overtime_calculation, format: :time) %></td>
+                        <td><%= at.overtime_reason %></td>
+                        <td><%= at.select :overtime_request_status, include_blank: "申請中" %></td>
+                        <td><%= at.check_box :change %></td>
                         <td><%= link_to "確認", user_path(request_user.id, day), class: "btn btn-primary" %></td>                    
                       </tr>
                     </tbody>
-                    <% end %>
                   <% end %>
-                </table>
+                <% end %>
+              </table>
+
+              <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
             <% end %>
-            <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
-          
           <% end %>
         </div>
       </div>
