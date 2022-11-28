@@ -34,15 +34,15 @@
                     <tbody>
                       <tr>
                         <td><%= l(oa.worked_on, format: :short) %></td>
-                        <td class='<%= "wday#{at.worked_on.wday}"%>'>
-                          <%= $days_of_the_week[at.worked_on.wday] %>
+                        <td class='<%= "wday#{oa.worked_on.wday}"%>'>
+                          <%= $days_of_the_week[oa.worked_on.wday] %>
                         </td>
-                        <td><%= l(at.end_time, format: :time) %></td>
+                        <td><%= l(oa.end_time, format: :time) %></td>
                         <td><%= l(request_user.designated_work_end_time, format: :time) %></td>
-                        <td><%= l(at.overtime_calculation, format: :time) %></td>
-                        <td><%= at.overtime_reason %></td>
+                        <td><%= oa.overtime_calculation(request_user.designated_work_end_time) %></td>
+                        <td><%= oa.overtime_reason %></td>
                         <td><%= at.select :overtime_request_status, include_blank: "申請中" %></td>
-                        <td><%= at.check_box :change %></td>
+                        <td><%= at.check_box :approval %></td>
                         <td><%= link_to "確認", user_path(request_user.id, day), class: "btn btn-primary" %></td>                    
                       </tr>
                     </tbody>

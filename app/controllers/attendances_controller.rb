@@ -75,8 +75,8 @@ class AttendancesController < ApplicationController
   def notice_overtime
     @attendance_lists = Attendance.where(overtime_request_status: "申請中", confirmer: @user.name)
                                   .order(:user_id, :worked_on).group_by(&:user_id)
-    @request_users = User.where(id: Attendance.where(confirmer: @user.name, overtime_request_status: "申請中").select(:user_id))
-    @attendance = Attendance.find(params[:id])
+    # @request_users = User.where(id: Attendance.where(confirmer: @user.name, overtime_request_status: "申請中").select(:user_id))
+    @request_users = User.joins(:attendances).where(attendances: {confirmer: @user.name, overtime_request_status: "申請中"})
   end
 
   # 残業申請のお知らせ更新
