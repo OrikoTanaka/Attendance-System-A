@@ -81,20 +81,13 @@ class AttendancesController < ApplicationController
 
   # 残業申請のお知らせ更新
   def update_notice_overtime
-    ActiveRecord::Base.transaction do # トランザクションを開始します。
-      notice_overtime_params.each do |id, item|
-        attendance = Attendance.find(id)
-        attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
-        attendance.save!(context: :update_notice_overtime) # 入力項目のバリデーション実行
-      end
+    notice_overtime_params.each do |id, item|
+      attendance = Attendance.find(id)
+      attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
+      attendance.save!(context: :update_notice_overtime) # 入力項目のバリデーション実行
     end
     flash[:success] = "変更を送信しました。"
     redirect_to user_url(current_user)
-
-  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "変更チェックボックスにチェックを入れてください。"
-    redirect_to user_url(current_user)
-
   end
 
   private
@@ -110,6 +103,6 @@ class AttendancesController < ApplicationController
 
     # 残業申請の承認情報
     def notice_overtime_params
-      params.require(:user).permit(attendances: [:worked_on, :overtime_request_status, :approval])[:attendances]
+      params.require(:user).permit(attendances: [:overtime_request_status, :approval])[:attendances]
     end
 end
