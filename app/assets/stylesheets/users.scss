@@ -78,9 +78,10 @@
   color: red;
   text-decoration: none;
   display:flex;
+
+  span {
+    border: solid 1px red;
+    font-weight: bold;
+  }
 }
 
-span{
-  border: solid 1px red;
-  font-weight: bold;
-}

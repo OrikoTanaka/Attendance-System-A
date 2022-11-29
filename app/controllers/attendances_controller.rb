@@ -83,8 +83,7 @@ class AttendancesController < ApplicationController
   def update_notice_overtime
     notice_overtime_params.each do |id, item|
       attendance = Attendance.find(id)
-      attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
-      attendance.save!(context: :update_notice_overtime) # 入力項目のバリデーション実行
+      attendance.update(item)
     end
     flash[:success] = "変更を送信しました。"
     redirect_to user_url(current_user)
@@ -103,6 +102,6 @@ class AttendancesController < ApplicationController
 
     # 残業申請の承認情報
     def notice_overtime_params
-      params.require(:user).permit(attendances: [:overtime_request_status, :approval])[:attendances]
+      params.permit(:overtime_request_status, :approval)
     end
 end
