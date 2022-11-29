@@ -4,6 +4,7 @@ class Attendance < ApplicationRecord
   validates :worked_on, presence: true
   validates :note, length: { maximum: 50 }
   validates :end_time, :overtime_reason, :confirmer, presence: true, on: :update_request_overtime
+  validates :approval, presence: true, on: :update_notice_overtime
   
 
   # 出勤時間が存在しない場合、退勤時間は無効

@@ -75,12 +75,26 @@ class AttendancesController < ApplicationController
   def notice_overtime
     @attendance_lists = Attendance.where(overtime_request_status: "申請中", confirmer: @user.name)
                                   .order(:user_id, :worked_on).group_by(&:user_id)
-    # @request_users = User.where(id: Attendance.where(confirmer: @user.name, overtime_request_status: "申請中").select(:user_id))
-    @request_users = User.joins(:attendances).where(attendances: {confirmer: @user.name, overtime_request_status: "申請中"})
+    @request_users = User.where(id: Attendance.where(confirmer: @user.name, overtime_request_status: "申請中").select(:user_id))
+    # @request_users = User.joins(:attendances).where(attendances: {confirmer: @user.name, overtime_request_status: "申請中"})
   end
 
   # 残業申請のお知らせ更新
   def update_notice_overtime
+    ActiveRecord::Base.transaction do # トランザクションを開始します。
+      notice_overtime_params.each do |id, item|
+        attendance = Attendance.find(id)
+        attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
+        attendance.save!(context: :update_notice_overtime) # 入力項目のバリデーション実行
+      end
+    end
+    flash[:success] = "変更を送信しました。"
+    redirect_to user_url(current_user)
+
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    flash[:danger] = "変更チェックボックスにチェックを入れてください。"
+    redirect_to user_url(current_user)
+
   end
 
   private
@@ -92,5 +106,10 @@ class AttendancesController < ApplicationController
     # 残業申請情報
     def request_overtime_params
       params.require(:user).permit(attendances: [:worked_on, :end_time, :nextday, :overtime_reason, :confirmer, :overtime_request_status])[:attendances]
+    end
+
+    # 残業申請の承認情報
+    def notice_overtime_params
+      params.require(:user).permit(attendances: [:worked_on, :overtime_request_status, :approval])[:attendances]
     end
 end

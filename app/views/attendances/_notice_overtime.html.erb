@@ -3,11 +3,9 @@
 
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
-    <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
       </button>
-    </div>
 
     <div class="modal-body">
       <div class="row">
@@ -21,7 +19,9 @@
                   <tr>
                     <td><%= "日付" %></td>
                     <td><%= "曜日" %></td>
-                    <td class="col-sm-2"><%= "終了予定時間" %></td>
+                    <td><%= "終了予定時間" %></td>
+                    <td><%= "指定勤務終了時間" %></td>
+                    <td><%= "時間外時間" %></td>
                     <td class="col-sm-5"><%= "業務処理内容" %></td>
                     <td><%= "指示者確認㊞" %></td>
                     <td><%= "変更" %></td>
@@ -41,9 +41,9 @@
                         <td><%= l(request_user.designated_work_end_time, format: :time) %></td>
                         <td><%= oa.overtime_calculation(request_user.designated_work_end_time) %></td>
                         <td><%= oa.overtime_reason %></td>
-                        <td><%= at.select :overtime_request_status, include_blank: "申請中" %></td>
+                        <td><%= at.select :overtime_request_status, [['申請中','申請中'], ['なし','なし'], ['承認','承認'], ['否認','否認']], selected: "申請中" %></td>
                         <td><%= at.check_box :approval %></td>
-                        <td><%= link_to "確認", user_path(request_user.id, day), class: "btn btn-primary" %></td>                    
+                        <td><%= link_to "確認", user_path(request_user.id), class: "btn btn-primary" %></td>                    
                       </tr>
                     </tbody>
                   <% end %>
