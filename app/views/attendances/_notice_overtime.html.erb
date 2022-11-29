@@ -10,10 +10,10 @@
     <div class="modal-body">
       <div class="row">
         <div class="col-md-12">
-          <% @request_users.each do |request_user| %>
-            <h4 class="modal-title" style="text-align:center"><%= "【#{request_user.name}からの残業申請】" %></h4>
-              
-            <%= form_with(model: @user, url: update_notice_overtime_user_attendance_path, local: true, method: :patch) do |f| %>
+
+          <%= form_with(model: @user, url: update_notice_overtime_user_attendance_path, local: true, method: :patch) do |f| %>
+            <% @request_users.each do |request_user| %>
+              <h4 class="modal-title" style="text-align:center"><%= "【#{request_user.name}からの残業申請】" %></h4>
               <table class="table table-bordered table-striped table-position table-hover">
                 <thead>
                   <tr>
@@ -49,9 +49,10 @@
                   <% end %>
                 <% end %>
               </table>
-
-              <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
             <% end %>
+            
+            <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+
           <% end %>
         </div>
       </div>
