@@ -117,9 +117,14 @@
           </td>
           <td><%= day.overtime_reason %></td>
           <td>
+            <%= day.result_of_overtime_request %>
+<%
+=begin %>
             <% if day.overtime_request_status.present? %>
               <%= day.confirmer %> へ <%= day.overtime_request_status %>
             <% end %>
+<%
+=end %>
           </td>
         </tr>
       <% end %>

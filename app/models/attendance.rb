@@ -37,4 +37,19 @@ class Attendance < ApplicationRecord
       format("%.2f", (((self.end_time - designated_work_end_time) / 60) / 60.0))
     end
   end
+
+  # 勤怠ページにて残業申請後の現在の上長確認結果を表示
+  def result_of_overtime_request
+    if self.overtime_request_status.present?
+      if self.overtime_request_status = "申請中"
+        return "#{self.confirmer}へ申請中"
+      elsif self.overtime_request_status = "承認"
+        return "残業承認済"
+      elsif self.overtime_request_status = "否認"
+        return "残業否認"
+      elsif self.overtime_request_status = "なし"
+        return ""
+      end
+    end
+  end
 end

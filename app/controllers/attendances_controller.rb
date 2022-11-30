@@ -81,10 +81,8 @@ class AttendancesController < ApplicationController
 
   # 残業申請のお知らせ更新
   def update_notice_overtime
-    notice_overtime_params.each do |id, item|
-      attendance = Attendance.find(id)
-      attendance.update(item)
-    end
+    attendance = Attendance.find(params[:id])
+    attendance.update（notice_overtime_params）
     flash[:success] = "変更を送信しました。"
     redirect_to user_url(current_user)
   end
