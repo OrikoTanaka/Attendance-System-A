@@ -41,7 +41,7 @@
                         <td><%= l(request_user.designated_work_end_time, format: :time) %></td>
                         <td><%= oa.overtime_calculation(request_user.designated_work_end_time) %></td>
                         <td><%= oa.overtime_reason %></td>
-                        <td><%= at.select :overtime_request_status, [['申請中','申請中'], ['なし','なし'], ['承認','承認'], ['否認','否認']], selected: "申請中" %></td>
+                        <td><%= at.select :overtime_request_status, [['申請中'], ['なし'], ['承認'], ['否認']], selected: "申請中" %></td>
                         <td><%= at.check_box :approval %></td>
                         <td><%= link_to "確認", user_path(request_user.id), class: "btn btn-primary" %></td>                    
                       </tr>

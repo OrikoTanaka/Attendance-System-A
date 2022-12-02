@@ -81,6 +81,7 @@ class AttendancesController < ApplicationController
 
   # 残業申請のお知らせ更新
   def update_notice_overtime
+    @attendance = Attendance.find(params[:id])
     ActiveRecord::Base.transaction do 
       notice_overtime_params.each do |id,item|
         attendance = Attendance.find(id)
