@@ -74,26 +74,12 @@ class AttendancesController < ApplicationController
   # 残業申請のお知らせモーダル
   def notice_overtime
     @attendance_lists = Attendance.where(overtime_request_status: "申請中", confirmer: @user.name)
-                                  .order(:user_id, :worked_on).group_by(&:user_id)
+                                  .order(:worked_on).group_by(&:user_id)
     @request_users = User.where(id: Attendance.where(confirmer: @user.name, overtime_request_status: "申請中").select(:user_id))
     # @request_users = User.joins(:attendances).where(attendances: {confirmer: @user.name, overtime_request_status: "申請中"})
   end
 
-  # 残業申請のお知らせ更新
-  def update_notice_overtime
-    @attendance = Attendance.find(params[:id])
-    ActiveRecord::Base.transaction do 
-      notice_overtime_params.each do |id,item|
-        attendance = Attendance.find(id)
-        attendance.update!(item)
-      end
-    end
-    flash[:success] = "変更を送信しました。"
-    redirect_to user_url(current_user)
-  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-    redirect_to user_url(current_user)
-  end
+  
 
   private
     # 1ヶ月分の勤怠情報を扱います。

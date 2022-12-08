@@ -52,4 +52,38 @@ class Attendance < ApplicationRecord
       end
     end
   end
+
+  # 勤怠ページにて一ヶ月分の勤怠申請の現在の上長確認結果を表示
+  def result_of_onemonth_request
+    if self.onemonth_request_status.present?
+      if self.onemonth_request_status = "申請中"
+        return "#{self.onemonth_confirmer}へ申請中"
+      elsif self.onemonth_request_status = "承認"
+        return "#{self.onemonth_confirmer}から承認済"
+      elsif self.onemonth_request_status = "否認"
+        return "勤怠否認"
+      elsif self.onemonth_request_status = "なし"
+        return "所属長承認　未"
+      end
+    else
+      "所属長承認　未"
+    end
+  end
+
+  # 残業申請の退勤時間の更新
+  def self.finish_at_update(user)
+    @attendances = Attendance.find(params[:id])
+      ActiveRecord::Base.transaction do 
+        notice_overtime_params.each do |id,item|
+          attendance = Attendance.find(id)
+          attendance.attributes(item)
+          attendance.save!
+        end
+      end
+     flash[:success] = "変更を送信しました。"
+     redirect_to user_url(current_user)
+    rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+     redirect_to user_url(current_user)
+  end
 end

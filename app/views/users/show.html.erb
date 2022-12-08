@@ -25,17 +25,17 @@
 <!--各種 申請お知らせテーブル-->
 <% if current_user.superior? %>
   <div class="row">
-  <%= link_to "【 所属長承認申請のお知らせ 】", '#' %><br>
-  <%= link_to "【 勤怠変更申請のお知らせ 】", '#' %><br>
+    <%= link_to "【 所属長承認申請のお知らせ 】", '#' %><br>
+    <%= link_to "【 勤怠変更申請のお知らせ 】", '#' %><br>
 
-  <% if @request_quantity > 0 %>
-    <div class="notice-overtime">
-      <%= link_to "【 残業申請のお知らせ 】", notice_overtime_user_attendance_path(current_user), remote: true, style:"color:#f00" %>
-      <span><%= @request_quantity %>件の通知があります</span>
-    </div><br>
-  <% else %>
-    <%= "【 残業申請のお知らせ 】" %><br>
-  <% end %>
+    <% if @request_quantity > 0 %>
+      <div class="notice-overtime">
+        <%= link_to "【 残業申請のお知らせ 】", notice_overtime_user_attendance_path(current_user), remote: true, style:"color:#f00" %>
+        <span><%= @request_quantity %>件の通知があります</span>
+      </div><br>
+    <% else %>
+      <%= "【 残業申請のお知らせ 】" %><br>
+    <% end %>
   
   </div>
 
@@ -118,13 +118,6 @@
           <td><%= day.overtime_reason %></td>
           <td>
             <%= day.result_of_overtime_request %>
-<%
-=begin %>
-            <% if day.overtime_request_status.present? %>
-              <%= day.confirmer %> へ <%= day.overtime_request_status %>
-            <% end %>
-<%
-=end %>
           </td>
         </tr>
       <% end %>
@@ -138,7 +131,20 @@
         <td colspan="6"></td>
         <td><%= format("%.2f", @total_working_times.to_f) %></td>
         <td colspan="5"></td>
-        <td>所属長承認</td>
+        <%
+=begin%>
+  
+
+        <!-- １ヶ月分の勤怠申請 -->
+        <td>
+          <%= form_with(model: @user, url: '#', local: true, method: :post) do |f| %>
+            <%= @first_day.result_of_onemonth_request %>
+            <%= f.select :onemonth_confirmer, @superiors.map{ |superior| [superior.name] }, include_blank: ""%>
+            <%= f.submit "申請", class: "btn btn-primary btn-block btn-onemonth" %>
+          <% end %>
+        </td>
+<%
+=end%>
       </tr>
     </tfoot>
   </table>
