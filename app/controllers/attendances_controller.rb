@@ -79,6 +79,11 @@ class AttendancesController < ApplicationController
     # @request_users = User.joins(:attendances).where(attendances: {confirmer: @user.name, overtime_request_status: "申請中"})
   end
 
+  # 残業申請の承認
+  def update_approve_req_overtime
+    @user = User.find(params[:user_id])
+    finish_at_update(@user)
+  end
   
 
   private
@@ -93,7 +98,7 @@ class AttendancesController < ApplicationController
     end
 
     # 残業申請の承認情報
-    def notice_overtime_params
-      params.require(:user).permit(attendances: [:overtime_request_status, :approval])[:attendances]
-    end
+    # def notice_overtime_params
+    #   params.require(:user).permit(attendances: [:overtime_request_status, :approval])[:attendances]
+    # end
 end

@@ -72,7 +72,7 @@ class Attendance < ApplicationRecord
 
   # 残業申請の退勤時間の更新
   def self.finish_at_update(user)
-    @attendances = Attendance.find(params[:id])
+    @attendances = Attendance.where(confirmer: @user.name)
       ActiveRecord::Base.transaction do 
         notice_overtime_params.each do |id,item|
           attendance = Attendance.find(id)
@@ -83,7 +83,12 @@ class Attendance < ApplicationRecord
      flash[:success] = "変更を送信しました。"
      redirect_to user_url(current_user)
     rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+     flash[:danger] = "無効な入力データがあった為、変更をキャンセルしました。"
      redirect_to user_url(current_user)
+  end
+
+   # 残業申請の承認情報
+  def self.notice_overtime_params
+    params.require(:user).permit(attendances: [:overtime_request_status, :approval])[:attendances]
   end
 end
