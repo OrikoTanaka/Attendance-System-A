@@ -20,12 +20,12 @@ ActiveRecord::Schema.define(version: 20221206030613) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.time "end_time"
+    t.time "end_time" # 残業終了時間
     t.string "overtime_reason"
-    t.boolean "nextday", default: false
-    t.string "confirmer"
-    t.string "overtime_request_status"
-    t.boolean "approval"
+    t.boolean "nextday", default: false # 残業終了時間が翌日かどうかのチェックボックス
+    t.string "confirmer" # 残業申請先上長
+    t.string "overtime_request_status" # 残業申請状況
+    t.boolean "approval" # 残業承認（変更）チェックボックス
     t.string "onemonth_request_status"
     t.string "onemonth_confirmer"
     t.index ["user_id"], name: "index_attendances_on_user_id"

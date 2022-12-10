@@ -71,20 +71,28 @@ class Attendance < ApplicationRecord
   end
 
   # 残業申請の退勤時間の更新
-  def self.finish_at_update(user)
+  def self.finish_at_update(user, designated_work_end_time)
     @attendances = Attendance.where(confirmer: @user.name)
-      ActiveRecord::Base.transaction do 
-        notice_overtime_params.each do |id,item|
-          attendance = Attendance.find(id)
-          attendance.attributes(item)
-          attendance.save!
+      if self.approval
+        if self.overtime_request_status = "承認"
+          self.finished_at = self.end_time
+          self.end_time = nil
+          self.nextday = false
+          self.approval = false
+          self.confirmer = nil
+        else self.overtime_request_status = "否認" || "なし"
+          self.finished_at = designated_work_end_time
+          self.end_time = nil
+          self.nextday = false
+          self.approval = false
+          self.confirmer = nil
         end
+        @attendances.save
+        flash[:success] = "変更を送信しました。"
+        redirect_to user_url(current_user)
+      else 
+        redirect_to user_url(current_user)
       end
-     flash[:success] = "変更を送信しました。"
-     redirect_to user_url(current_user)
-    rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-     flash[:danger] = "無効な入力データがあった為、変更をキャンセルしました。"
-     redirect_to user_url(current_user)
   end
 
    # 残業申請の承認情報

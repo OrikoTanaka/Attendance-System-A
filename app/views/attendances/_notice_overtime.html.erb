@@ -12,7 +12,7 @@
       <div class="row">
         <div class="col-md-12">
 
-        <%= form_with(model: @user, url: attendances_update_approve_req_overtime_user_path, local: true, method: :patch) do |f| %>
+        <%= form_with(model: @user, url: attendances_update_approve_req_overtime_user_path(@user), local: true, method: :patch) do |f| %>
           <div>  
             <% @request_users.each do |request_user| %>
               <h4 class="modal-title" style="text-align:center"><%= "【#{request_user.name}からの残業申請】" %></h4>
