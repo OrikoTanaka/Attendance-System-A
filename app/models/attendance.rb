@@ -72,7 +72,8 @@ class Attendance < ApplicationRecord
 
   # 残業申請の退勤時間の更新
   def self.finish_at_update(user, designated_work_end_time)
-    @attendances = Attendance.where(confirmer: @user.name)
+    notice_overtime_params.each do |id, item|
+      attendance = Attendance.find(id)
       if self.approval
         if self.overtime_request_status = "承認"
           self.finished_at = self.end_time
@@ -87,16 +88,18 @@ class Attendance < ApplicationRecord
           self.approval = false
           self.confirmer = nil
         end
-        @attendances.save
+        attendance.attributes = item
+        attendance.save
         flash[:success] = "変更を送信しました。"
         redirect_to user_url(current_user)
       else 
         redirect_to user_url(current_user)
       end
+    end
   end
 
    # 残業申請の承認情報
-  def self.notice_overtime_params
+  def notice_overtime_params
     params.require(:user).permit(attendances: [:overtime_request_status, :approval])[:attendances]
   end
 end

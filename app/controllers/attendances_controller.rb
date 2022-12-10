@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month 
@@ -80,7 +80,7 @@ class AttendancesController < ApplicationController
 
   # 残業申請の承認
   def update_approve_req_overtime
-    finish_at_update(@user)
+    Attendance.finish_at_update(@user, @user.designated_work_end_time)
   end
   
 
