@@ -80,7 +80,12 @@ class AttendancesController < ApplicationController
 
   # 残業申請の承認
   def update_approve_req_overtime
-    Attendance.finish_at_update(@user, @user.designated_work_end_time)
+    if Attendance.finish_at_update(@user.designated_work_end_time, notice_overtime_params)
+      flash[:success] = "変更を送信しました。"
+    else
+      flash[:danger] = "入力が足りません。やり直してください。"
+    end
+    redirect_to user_url(current_user)
   end
   
 

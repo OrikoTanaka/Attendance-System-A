@@ -71,35 +71,34 @@ class Attendance < ApplicationRecord
   end
 
   # 残業申請の退勤時間の更新
-  def self.finish_at_update(user, designated_work_end_time)
-    notice_overtime_params.each do |id, item|
-      attendance = Attendance.find(id)
-      if self.approval
-        if self.overtime_request_status = "承認"
-          self.finished_at = self.end_time
-          self.end_time = nil
-          self.nextday = false
-          self.approval = false
-          self.confirmer = nil
-        else self.overtime_request_status = "否認" || "なし"
-          self.finished_at = designated_work_end_time
-          self.end_time = nil
-          self.nextday = false
-          self.approval = false
-          self.confirmer = nil
+  def self.finish_at_update(designated_work_end_time, notice_overtime_params)
+    ActiveRecord::Base.transaction do
+      notice_overtime_params.each do |id, item|
+        attendance = Attendance.find(id)
+        if item[:approval]
+          if attendance.overtime_request_status = "承認"
+            attendance.finished_at = attendance.end_time
+            attendance.end_time = nil
+            attendance.nextday = false
+            attendance.approval = false
+            attendance.confirmer = nil
+          else attendance.overtime_request_status = "否認" || "なし"
+            attendance.finished_at = designated_work_end_time
+            attendance.end_time = nil
+            attendance.nextday = false
+            attendance.approval = false
+            attendance.confirmer = nil
+          end
+          attendance.attributes = item
+          attendance.save!
+
+          # flash[:success] = "変更を送信しました。"
         end
-        attendance.attributes = item
-        attendance.save
-        flash[:success] = "変更を送信しました。"
-        redirect_to user_url(current_user)
-      else 
-        redirect_to user_url(current_user)
+        # redirect_to user_url(current_user)
       end
     end
-  end
-
-   # 残業申請の承認情報
-  def notice_overtime_params
-    params.require(:user).permit(attendances: [:overtime_request_status, :approval])[:attendances]
+    true
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    false
   end
 end

@@ -32,23 +32,24 @@
                 </thead>
 
                 <% @attendance_lists[request_user.id].each do |oa| %>
-                  <%= f.fields_for @attendance_lists[request_user.id] do |at| %>
-                    <tbody>
-                      <tr>
-                        <td><%= l(oa.worked_on, format: :short) %></td>
-                        <td class='<%= "wday#{oa.worked_on.wday}"%>'>
-                          <%= $days_of_the_week[oa.worked_on.wday] %>
-                        </td>
-                        <td><%= l(oa.end_time, format: :time) %></td>
-                        <td><%= l(request_user.designated_work_end_time, format: :time) %></td>
-                        <td><%= oa.overtime_calculation(request_user.designated_work_end_time) %></td>
-                        <td><%= oa.overtime_reason %></td>
-                        <td><%= at.select :overtime_request_status, [['申請中','申請中'], ['なし','なし'], ['承認','承認'], ['否認','否認']], selected: "申請中" %></td>
-                        <td><%= at.check_box :approval %></td>
-                        <td><%= link_to "確認", user_path(request_user.id), class: "btn btn-primary" %></td>                    
-                      </tr>
-                    </tbody>
-                  <% end %>
+                    <%= f.fields_for "attendances[]", oa do |at| %>
+                      <tbody>
+                        <tr>
+                          <td><%= l(oa.worked_on, format: :short) %></td>
+                          <td class='<%= "wday#{oa.worked_on.wday}"%>'>
+                            <%= $days_of_the_week[oa.worked_on.wday] %>
+                          </td>
+                          <td><%= l(oa.end_time, format: :time) %></td>
+                          <td><%= l(request_user.designated_work_end_time, format: :time) %></td>
+                          <td><%= oa.overtime_calculation(request_user.designated_work_end_time) %></td>
+                          <td><%= oa.overtime_reason %></td>
+                          <td><%= at.select :overtime_request_status, [['申請中','申請中'], ['なし','なし'], ['承認','承認'], ['否認','否認']], selected: "申請中" %></td>
+                          <td><%= at.check_box :approval %></td>
+                          <td><%= link_to "確認", user_path(request_user.id), class: "btn btn-primary" %></td>                    
+                        </tr>
+                      </tbody>
+                    <% end %>
+
                 <% end %>
               </table>
             <% end %>
