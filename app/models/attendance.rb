@@ -9,7 +9,7 @@ class Attendance < ApplicationRecord
   # 出勤時間が存在しない場合、退勤時間は無効
   validate :finished_at_is_invalid_without_a_started_at
   
-  # 出勤・退勤時間どちらも存在する時、出勤時間より早い退勤時間は無効
+  # 出勤・退勤時間どちらも存在する時、翌日チェックがない時,出勤時間より早い退勤時間は無効
   validate :started_at_than_finished_at_fast_if_invalid
 
   # 出勤時間が存在、退勤時間が存在しない時、更新は無効
@@ -20,7 +20,7 @@ class Attendance < ApplicationRecord
   end
 
   def started_at_than_finished_at_fast_if_invalid
-    if started_at.present? && finished_at.present?
+    if started_at.present? && finished_at.present? && !nextday.present?
       errors.add(:started_at, "より早い退勤時間は無効です") if started_at > finished_at
     end
   end
@@ -76,13 +76,13 @@ class Attendance < ApplicationRecord
       notice_overtime_params.each do |id, item|
         attendance = Attendance.find(id)
         if item[:approval]
-          if attendance.overtime_request_status = "承認"
+          if item[:overtime_request_status] == "承認"
             attendance.finished_at = attendance.end_time
             attendance.end_time = nil
             attendance.nextday = false
             attendance.approval = false
             attendance.confirmer = nil
-          else attendance.overtime_request_status = "否認" || "なし"
+          else item[:overtime_request_status] == "否認" || "なし"
             attendance.finished_at = designated_work_end_time
             attendance.end_time = nil
             attendance.nextday = false
@@ -91,14 +91,11 @@ class Attendance < ApplicationRecord
           end
           attendance.attributes = item
           attendance.save!
-
-          # flash[:success] = "変更を送信しました。"
         end
-        # redirect_to user_url(current_user)
       end
     end
-    true
+    true # トランザクションで保存に成功した場合、trueを返す
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    false
+    false # 保存（バリデーションに引っ掛かるなども）に失敗したらfalseを返す
   end
 end

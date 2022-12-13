@@ -53,6 +53,7 @@ class AttendancesController < ApplicationController
 
   # 残業申請送信
   def update_request_overtime
+    debugger
     @user = User.find(params[:user_id])
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       request_overtime_params.each do |id, item|
