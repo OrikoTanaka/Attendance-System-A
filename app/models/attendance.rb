@@ -75,7 +75,7 @@ class Attendance < ApplicationRecord
     ActiveRecord::Base.transaction do
       notice_overtime_params.each do |id, item|
         attendance = Attendance.find(id)
-        if item[:approval]
+        if item[:approval] # itemはハッシュなので、キーを指定することになる。そのためにはこの記述の仕方をする
           if item[:overtime_request_status] == "承認"
             attendance.finished_at = attendance.end_time
             attendance.end_time = nil
