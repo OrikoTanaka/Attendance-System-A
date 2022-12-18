@@ -21,7 +21,7 @@ class Attendance < ApplicationRecord
 
   def started_at_than_finished_at_fast_if_invalid
     if started_at.present? && finished_at.present? && !nextday.present?
-      errors.add(:started_at, "より早い退勤時間は無効です") if started_at > finished_at
+      errors.add(:finished_at, "出勤時間より早い退勤時間は無効です") if started_at > finished_at
     end
   end
 
@@ -32,43 +32,44 @@ class Attendance < ApplicationRecord
     # 残業終了時間と指定勤務終了時間を受け取り、残業時間を計算して返します。
   def overtime_calculation(designated_work_end_time)
     if self.nextday # 翌日にチェック(true)があれば残業終了時間に１日足して計算する 
-      format("%.2f", (((self.end_time - designated_work_end_time) / 60) / 60.0))
+      format("%.2f", ((self.end_time.hour - designated_work_end_time.hour) + (self.end_time.min - designated_work_end_time.min) / 60.0) +24)
     else
-      format("%.2f", (((self.end_time - designated_work_end_time) / 60) / 60.0))
+      format("%.2f", (self.end_time.hour - designated_work_end_time.hour) + (self.end_time.min - designated_work_end_time.min) / 60.0)
     end
   end
 
-  # 勤怠ページにて残業申請後の現在の上長確認結果を表示
-  def result_of_overtime_request
-    if self.overtime_request_status.present?
-      if self.overtime_request_status = "申請中"
-        return "#{self.confirmer}へ申請中"
-      elsif self.overtime_request_status = "承認"
-        return "残業承認済"
-      elsif self.overtime_request_status = "否認"
-        return "残業否認"
-      elsif self.overtime_request_status = "なし"
-        return ""
-      end
-    end
-  end
+  # # 勤怠ページにて残業申請後の現在の上長確認結果を表示
+  # def result_of_overtime_request
+  #   if self.overtime_request_status.present?
+  #     if self.overtime_request_status = "申請中"
+  #       return "#{self.confirmer}へ申請中"
+  #     elsif self.overtime_request_status = "承認"
+  #       return "残業承認済"
+  #     elsif self.overtime_request_status = "否認"
+  #       return "残業否認"
+  #     elsif self.overtime_request_status = "なし"
+  #       return ""
+  #     end
+  #   end
+  # end
 
-  # 勤怠ページにて一ヶ月分の勤怠申請の現在の上長確認結果を表示
-  def result_of_onemonth_request
-    if self.onemonth_request_status.present?
-      if self.onemonth_request_status = "申請中"
-        return "#{self.onemonth_confirmer}へ申請中"
-      elsif self.onemonth_request_status = "承認"
-        return "#{self.onemonth_confirmer}から承認済"
-      elsif self.onemonth_request_status = "否認"
-        return "勤怠否認"
-      elsif self.onemonth_request_status = "なし"
-        return "所属長承認　未"
-      end
-    else
-      "所属長承認　未"
-    end
-  end
+  # # 勤怠ページにて一ヶ月分の勤怠申請の現在の上長確認結果を表示
+  # def result_of_onemonth_request
+  #   debugger
+  #   if self.onemonth_request_status.present?
+  #     if self.onemonth_request_status = "申請中"
+  #       return "#{self.onemonth_confirmer}へ申請中"
+  #     elsif self.onemonth_request_status = "承認"
+  #       return "#{self.onemonth_confirmer}から承認済"
+  #     elsif self.onemonth_request_status = "否認"
+  #       return "勤怠否認"
+  #     elsif self.onemonth_request_status = "なし"
+  #       return "所属長承認　未"
+  #     end
+  #   else
+  #     "所属長承認　未"
+  #   end
+  # end
 
   # 残業申請の退勤時間の更新
   def self.finish_at_update(designated_work_end_time, notice_overtime_params)
@@ -77,13 +78,14 @@ class Attendance < ApplicationRecord
         attendance = Attendance.find(id)
         if item[:approval] # itemはハッシュなので、キーを指定することになる。そのためにはこの記述の仕方をする
           if item[:overtime_request_status] == "承認"
-            attendance.finished_at = attendance.end_time
+            attendance.overtime_request_status == "承認"
+            #attendance.finished_at = attendance.end_time
             attendance.end_time = nil
             attendance.nextday = false
             attendance.approval = false
             attendance.confirmer = nil
           else item[:overtime_request_status] == "否認" || "なし"
-            attendance.finished_at = designated_work_end_time
+            #attendance.finished_at = designated_work_end_time
             attendance.end_time = nil
             attendance.nextday = false
             attendance.approval = false

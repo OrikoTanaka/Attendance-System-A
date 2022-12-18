@@ -117,7 +117,15 @@
           </td>
           <td><%= day.overtime_reason %></td>
           <td>
-            <%= day.result_of_overtime_request %>
+            <% if day.overtime_request_status == "申請中" %>
+              <%= day.confirmer %>へ申請中<br>
+            <% elsif day.overtime_request_status == "承認" %>
+              残業承認済<br>
+            <% elsif day.overtime_request_status == "否認"%>
+              残業否認<br>
+            <% elsif day.overtime_request_status == "なし"%>
+              <%= "" %>
+            <% end %>
           </td>
         </tr>
       <% end %>
