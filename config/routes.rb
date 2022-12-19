@@ -14,7 +14,10 @@ Rails.application.routes.draw do
       patch 'update_user_info' 
       get 'attendances/edit_one_month'
       patch 'attendances/update_one_month'
-      patch 'attendances/update_approve_req_overtime' # 残業申請勤怠の承認
+      patch 'attendances/update_approve_req_overtime' # 残業申請の承認
+      get 'attendances/request_onemonth' # １ヶ月勤怠申請送信
+      get 'attendances/notice_onemonth' # １ヶ月勤怠申請のお知らせモーダル
+      patch 'attendances/update_approve_req_onemonth' # 1ヶ月勤怠の承認
     end
     collection do
       post 'import' # csvインポート
@@ -24,7 +27,7 @@ Rails.application.routes.draw do
     resources :attendances do
       member do
         get 'request_overtime' # 残業申請モーダル
-        patch 'update_request_overtime' 
+        patch 'update_request_overtime'  # 残業申請送信
         get 'notice_overtime' # 残業申請のお知らせモーダル
       end
     end

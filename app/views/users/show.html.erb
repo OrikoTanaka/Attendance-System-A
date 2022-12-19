@@ -25,20 +25,27 @@
 <!--各種 申請お知らせテーブル-->
 <% if current_user.superior? %>
   <div class="row">
-    <%= link_to "【 所属長承認申請のお知らせ 】", '#' %><br>
+  <!-- 所属長承認申請のお知らせ -->
+    <% if @req_onemonth_quantity > 0 %>
+      <div class="notice-onemonth">
+        <%= link_to "【 所属長承認申請のお知らせ 】", attendances_notice_onemonth_user_path(current_user), remote: true, style:"color:#f00" %>
+        <span><%= @req_onemonth_quantity %>件の通知があります</span>
+      </div><br>
+    <% else %>
+      <%= "【 所属長承認申請のお知らせ 】" %><br>
+    <% end %>
+     <!-- 勤怠変更申請のお知らせ -->
     <%= link_to "【 勤怠変更申請のお知らせ 】", '#' %><br>
-
-    <% if @request_quantity > 0 %>
+      <!-- 残業申請のお知らせ -->
+    <% if @req_overtime_quantity > 0 %>
       <div class="notice-overtime">
         <%= link_to "【 残業申請のお知らせ 】", notice_overtime_user_attendance_path(current_user), remote: true, style:"color:#f00" %>
-        <span><%= @request_quantity %>件の通知があります</span>
+        <span><%= @req_overtime_quantity %>件の通知があります</span>
       </div><br>
     <% else %>
       <%= "【 残業申請のお知らせ 】" %><br>
     <% end %>
-  
   </div>
-
 <% end %>
 
 <div class="btn-users-show">
@@ -139,20 +146,26 @@
         <td colspan="6"></td>
         <td><%= format("%.2f", @total_working_times.to_f) %></td>
         <td colspan="5"></td>
-        <%
-=begin%>
-  
-
         <!-- １ヶ月分の勤怠申請 -->
         <td>
-          <%= form_with(model: @user, url: '#', local: true, method: :post) do |f| %>
-            <%= @first_day.result_of_onemonth_request %>
-            <%= f.select :onemonth_confirmer, @superiors.map{ |superior| [superior.name] }, include_blank: ""%>
+          <%= form_with(model: @attendance, url: attendances_request_onemonth_user_path, local: true, method: :patch) do |f| %>
+            <% if @attendance.onemonth_request_status.nil? %>                
+              所属長承認 未<br>
+            <% elsif @attendance.onemonth_request_status == "申請中" %>
+              #{@attendance.onemonth_confirmer}へ申請中<br>
+            <% elsif @attendance.onemonth_request_status == "承認"%>
+              承認済<br>
+            <% elsif @attendance.onemonth_request_status == "否認" %>
+              勤怠否認<br>
+            <% elsif @attendance.onemonth_request_status == "なし" %>
+              所属長承認　未<br>
+            <% end %>
+            <!-- 上長選択 -->
+            <%= f.select :onemonth_confirmer, @superiors.map{ |superior| [superior.name] }, include_blank: "" %>
+            <!-- 申請ボタン -->
             <%= f.submit "申請", class: "btn btn-primary btn-block btn-onemonth" %>
           <% end %>
         </td>
-<%
-=end%>
       </tr>
     </tfoot>
   </table>

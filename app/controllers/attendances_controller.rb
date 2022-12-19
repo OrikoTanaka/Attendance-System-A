@@ -87,6 +87,28 @@ class AttendancesController < ApplicationController
     end
     redirect_to user_url(current_user)
   end
+
+  # １ヶ月の勤怠の申請
+  def request_onemonth
+    ActiveRecord::Base.transaction do # トランザクションを開始します。
+      request_onemonth_params.each do |id, item|
+        attendance = Attendance.find(id)
+        attendance.onemonth_request_status = "申請中"
+        attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
+        attendance.save!(context: :update_request_onemonth) # 入力項目のバリデーション実行
+      end
+    end
+    flash[:success] = " 当月の勤怠を申請しました。"
+    redirect_to user_url(current_user)
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    flash[:danger] = "申請に失敗しました。やり直してください。"
+    redirect_to user_url(current_user)
+  end
+
+  # １ヶ月の勤怠の承認
+  def update_approve_req_onemonth
+
+  end
   
 
   private
@@ -104,4 +126,9 @@ class AttendancesController < ApplicationController
     def notice_overtime_params
       params.require(:user).permit(attendances: [:overtime_request_status, :approval])[:attendances]
     end
+
+    # １ヶ月の勤怠申請情報
+      def request_onemonth_params
+        params.require(:user).permit(attendances: [:onemonth_confirmer])[:attendances]
+      end
 end

@@ -38,54 +38,20 @@ class Attendance < ApplicationRecord
     end
   end
 
-  # # 勤怠ページにて残業申請後の現在の上長確認結果を表示
-  # def result_of_overtime_request
-  #   if self.overtime_request_status.present?
-  #     if self.overtime_request_status = "申請中"
-  #       return "#{self.confirmer}へ申請中"
-  #     elsif self.overtime_request_status = "承認"
-  #       return "残業承認済"
-  #     elsif self.overtime_request_status = "否認"
-  #       return "残業否認"
-  #     elsif self.overtime_request_status = "なし"
-  #       return ""
-  #     end
-  #   end
-  # end
-
-  # # 勤怠ページにて一ヶ月分の勤怠申請の現在の上長確認結果を表示
-  # def result_of_onemonth_request
-  #   debugger
-  #   if self.onemonth_request_status.present?
-  #     if self.onemonth_request_status = "申請中"
-  #       return "#{self.onemonth_confirmer}へ申請中"
-  #     elsif self.onemonth_request_status = "承認"
-  #       return "#{self.onemonth_confirmer}から承認済"
-  #     elsif self.onemonth_request_status = "否認"
-  #       return "勤怠否認"
-  #     elsif self.onemonth_request_status = "なし"
-  #       return "所属長承認　未"
-  #     end
-  #   else
-  #     "所属長承認　未"
-  #   end
-  # end
-
   # 残業申請の退勤時間の更新
   def self.finish_at_update(designated_work_end_time, notice_overtime_params)
     ActiveRecord::Base.transaction do
       notice_overtime_params.each do |id, item|
         attendance = Attendance.find(id)
-        if item[:approval] # itemはハッシュなので、キーを指定することになる。そのためにはこの記述の仕方をする
+        if item[:approval] == "1"# itemはハッシュなので、キーを指定することになる。そのためにはこの記述[]の仕方をする
           if item[:overtime_request_status] == "承認"
-            attendance.overtime_request_status == "承認"
-            #attendance.finished_at = attendance.end_time
-            attendance.end_time = nil
+            #attendance.overtime_request_status == "承認"
+            attendance.finished_at = attendance.end_time
             attendance.nextday = false
             attendance.approval = false
             attendance.confirmer = nil
           else item[:overtime_request_status] == "否認" || "なし"
-            #attendance.finished_at = designated_work_end_time
+            attendance.finished_at = designated_work_end_time
             attendance.end_time = nil
             attendance.nextday = false
             attendance.approval = false
