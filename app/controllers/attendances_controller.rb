@@ -83,26 +83,22 @@ class AttendancesController < ApplicationController
     if Attendance.finish_at_update(@user.designated_work_end_time, notice_overtime_params)
       flash[:success] = "変更を送信しました。"
     else
-      flash[:danger] = "入力が足りません。やり直してください。"
+      flash[:danger] = "変更に失敗しました。やり直してください。"
     end
     redirect_to user_url(current_user)
   end
 
   # １ヶ月の勤怠の申請
   def request_onemonth
-    ActiveRecord::Base.transaction do # トランザクションを開始します。
-      request_onemonth_params.each do |id, item|
-        attendance = Attendance.find(id)
-        attendance.onemonth_request_status = "申請中"
-        attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
-        attendance.save!(context: :update_request_onemonth) # 入力項目のバリデーション実行
-      end
+    @user = User.find(params[:user_id])
+    @month_attendance = @user.attendances.find_by(worked_on: params[:attendance][:day])
+    if request_onemonth_params[:onemonth_confirmer].present? 
+      @month_attendance.update(request_onemonth_params)
+      flash[:success] = "#{@user.name}の1か月分の申請をしました。"
+    else
+      flash[:danger]= "所属長を選択してください。"
     end
-    flash[:success] = " 当月の勤怠を申請しました。"
-    redirect_to user_url(current_user)
-  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "申請に失敗しました。やり直してください。"
-    redirect_to user_url(current_user)
+    redirect_to user_url(@user)  
   end
 
   # １ヶ月の勤怠の承認

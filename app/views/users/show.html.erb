@@ -148,7 +148,7 @@
         <td colspan="5"></td>
         <!-- １ヶ月分の勤怠申請 -->
         <td>
-          <%= form_with(model: @attendance, url: attendances_request_onemonth_user_path, local: true, method: :patch) do |f| %>
+          <%= form_with(model: @attendance, url: attendances_request_onemonth_user_path(@user), local: true, method: :patch) do |f| %>
             <% if @attendance.onemonth_request_status.nil? %>                
               所属長承認 未<br>
             <% elsif @attendance.onemonth_request_status == "申請中" %>
