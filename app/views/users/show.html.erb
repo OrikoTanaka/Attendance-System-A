@@ -148,20 +148,22 @@
         <td colspan="5"></td>
         <!-- １ヶ月分の勤怠申請 -->
         <td>
-          <%= form_with(model: @attendance, url: attendances_request_onemonth_user_path(@user), local: true, method: :patch) do |f| %>
-            <% if @attendance.onemonth_request_status.nil? %>                
-              所属長承認 未<br>
-            <% elsif @attendance.onemonth_request_status == "申請中" %>
-              #{@attendance.onemonth_confirmer}へ申請中<br>
-            <% elsif @attendance.onemonth_request_status == "承認"%>
-              承認済<br>
-            <% elsif @attendance.onemonth_request_status == "否認" %>
-              勤怠否認<br>
-            <% elsif @attendance.onemonth_request_status == "なし" %>
-              所属長承認　未<br>
+          <%= form_with(model: @user, url: attendances_request_onemonth_user_path(@user), local: true, method: :patch) do |f| %>
+            <%= f.fields_for "attendances[]", @attendance do |attendance| %>
+              <% if @attendance.onemonth_request_status.nil? %>                
+                所属長承認 未<br>
+              <% elsif @attendance.onemonth_request_status == "申請中" %>
+                <%= @attendance.onemonth_confirmer %>へ申請中<br>
+              <% elsif @attendance.onemonth_request_status == "承認"%>
+                承認済<br>
+              <% elsif @attendance.onemonth_request_status == "否認" %>
+                勤怠否認<br>
+              <% elsif @attendance.onemonth_request_status == "なし" %>
+                所属長承認　未<br>
+              <% end %>
+              <!-- 上長選択 -->
+              <%= attendance.select :onemonth_confirmer, @superiors.map{ |superior| [superior.name] }, include_blank: "" %>
             <% end %>
-            <!-- 上長選択 -->
-            <%= f.select :onemonth_confirmer, @superiors.map{ |superior| [superior.name] }, include_blank: "" %>
             <!-- 申請ボタン -->
             <%= f.submit "申請", class: "btn btn-primary btn-block btn-onemonth" %>
           <% end %>

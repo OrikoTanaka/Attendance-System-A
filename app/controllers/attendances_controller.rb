@@ -90,15 +90,20 @@ class AttendancesController < ApplicationController
 
   # １ヶ月の勤怠の申請
   def request_onemonth
-    @user = User.find(params[:user_id])
-    @month_attendance = @user.attendances.find_by(worked_on: params[:attendance][:day])
-    if request_onemonth_params[:onemonth_confirmer].present? 
-      @month_attendance.update(request_onemonth_params)
-      flash[:success] = "#{@user.name}の1か月分の申請をしました。"
+    @user = User.find(params[:id])
+    if request_onemonth_params.present?
+      request_onemonth_params.each do |id,item|
+        attendance = Attendance.find(id)
+          attendance.onemonth_request_status = "申請中"
+          attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
+          attendance.save!
+      end
+      flash[:success] = "1ヶ月の勤怠を申請しました。"
+      redirect_to user_url(current_user)
     else
-      flash[:danger]= "所属長を選択してください。"
+      flash[:danger] = "所属長を選択してください。"
+      redirect_to user_url(current_user)
     end
-    redirect_to user_url(@user)  
   end
 
   # １ヶ月の勤怠の承認
@@ -125,6 +130,6 @@ class AttendancesController < ApplicationController
 
     # １ヶ月の勤怠申請情報
       def request_onemonth_params
-        params.require(:user).permit(attendances: [:onemonth_confirmer])[:attendances]
+        params.require(:user).permit(attendances: [:onemonth_confirmer, :onemonth_request_status])[:attendances]
       end
 end
