@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime, :notice_onemonth]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month 
@@ -106,11 +106,17 @@ class AttendancesController < ApplicationController
     end
   end
 
-  # １ヶ月の勤怠の承認
+  # １ヶ月の勤怠申請のお知らせモーダル
+  def notice_onemonth
+    @attendance_lists = Attendance.where(onemonth_request_status: "申請中", onemonth_confirmer: @user.name)
+                                  .order(:worked_on).group_by(&:user_id)
+    @request_users = User.where(id: Attendance.where(onemonth_confirmer: @user.name, onemonth_request_status: "申請中").select(:user_id))
+  end
+  
+  # １ヶ月の勤怠申請の承認
   def update_approve_req_onemonth
 
   end
-  
 
   private
     # 1ヶ月分の勤怠情報を扱います。

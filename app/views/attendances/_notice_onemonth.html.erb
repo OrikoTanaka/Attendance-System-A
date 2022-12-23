@@ -1,0 +1,54 @@
+<% provide(:class_text, 'notice_onemonth') %>
+<% provide(:button_text, '変更を送信する') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+
+        <%= form_with(model: @user, url: attendances_update_approve_req_onemonth_user_path(@user), local: true, method: :patch) do |f| %>
+          <div>  
+            <% @request_users.each do |request_user| %>
+              <h4 class="modal-title" style="text-align:center"><%= "【#{request_user.name}からの１ヶ月の勤怠申請】" %></h4>
+              <table class="table table-bordered table-striped table-position table-hover">
+                <thead>
+                  <tr>
+                    <td><%= "月" %></td>
+                    <td><%= "指示者確認㊞" %></td>
+                    <td><%= "変更" %></td>
+                    <td><%= "勤怠を確認する" %></td>
+                  </tr>
+                </thead>
+
+                <% @attendance_lists[request_user.id].each do |oa| %>
+                    <%= f.fields_for "attendances[]", oa do |at| %>
+                      <tbody>
+                        <tr>
+                          <td><%= l(oa.worked_on, format: :month) %></td>
+                          <td><%= at.select :onemonth_request_status, [['申請中','申請中'], ['なし','なし'], ['承認','承認'], ['否認','否認']], selected: "申請中" %></td>
+                          <td><%= at.check_box :onemonth_approval %></td>
+                          <td><%= link_to "確認", user_path(request_user.id), class: "btn btn-primary" %></td>                    
+                        </tr>
+                      </tbody>
+                    <% end %>
+
+                <% end %>
+              </table>
+            <% end %>
+          </div>
+          <!-- 変更送信ボタン -->
+          <div>         
+            <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+          </div>
+        <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
