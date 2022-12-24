@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime, :notice_onemonth]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime, :notice_onemonth, :notice_attendance_change]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month 
@@ -26,22 +26,38 @@ class AttendancesController < ApplicationController
     redirect_to @user
   end
 
+  # 勤怠の変更
   def edit_one_month
+    @superiors = User.where(superior: true).where.not(id: @user.id)
   end
-
+ 
+  # 勤怠の変更の申請
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
+        attendance.attendance_change_request_status = "申請中"
         attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
         attendance.save!(context: :update_one_month) #ここで↑で更新した値をレコードに保存(同時にバリデーションを実行)
       end
     end
-    flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
+    flash[:success] = "勤怠の変更を申請しました。"
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
+  end
+
+  # 勤怠の変更のお知らせモーダル
+  def notice_attendance_change
+    @attendance_lists = Attendance.where(attendance_change_request_status: "申請中", attendance_change_confirmer: @user.name)
+                                  .order(:worked_on).group_by(&:user_id)
+    @request_users = User.where(id: Attendance.where(attendance_change_confirmer: @user.name, attendance_change_request_status: "申請中").select(:user_id))
+  end
+
+  # 勤怠の変更申請の承認
+  def update_approve_req_attendance_change
+
   end
 
   # 残業申請フォーム
@@ -129,7 +145,7 @@ class AttendancesController < ApplicationController
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :attendance_change_confirmer, :attendance_change_approval, :attendance_change_request_status])[:attendances]
     end
 
     # 残業申請情報

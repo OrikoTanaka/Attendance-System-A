@@ -35,7 +35,14 @@
       <%= "【 所属長承認申請のお知らせ 】" %><br>
     <% end %>
      <!-- 勤怠変更申請のお知らせ -->
-    <%= link_to "【 勤怠変更申請のお知らせ 】", '#' %><br>
+    <% if @req_attendance_change_quantity > 0 %>
+      <div class="notice-attendance_change">
+        <%= link_to "【 勤怠変更申請のお知らせ 】", attendances_notice_attendance_change_user_path(current_user), remote: true, style:"color:#f00" %>
+        <span><%= @req_attendance_change_quantity %>件の通知があります</span>
+      </div><br>
+    <% else %>
+      <%= "【 勤怠変更申請のお知らせ 】" %><br>
+    <% end %>
       <!-- 残業申請のお知らせ -->
     <% if @req_overtime_quantity > 0 %>
       <div class="notice-overtime">
@@ -189,3 +196,6 @@
 
 <!-- 1ヶ月の勤怠申請のお知らせモーダルウィンドウ表示 -->
 <div id="notice-onemonth" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+<!-- 勤怠変更申請のお知らせモーダルウィンドウ表示 -->
+<div id="notice-attendance-change" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

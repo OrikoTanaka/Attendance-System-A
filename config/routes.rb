@@ -13,11 +13,14 @@ Rails.application.routes.draw do
       get 'edit_user_info'
       patch 'update_user_info' 
       get 'attendances/edit_one_month'
-      patch 'attendances/update_one_month'
+      patch 'attendances/update_one_month' # 勤怠の変更申請送信
+      get 'attendances/notice_attendance_change' # 勤怠変更申請のお知らせモーダル
+      patch 'attendances/update_approve_req_attendance_change' # 勤怠変更の承認
       patch 'attendances/update_approve_req_overtime' # 残業申請の承認
       patch 'attendances/request_onemonth' # １ヶ月勤怠申請送信
       get 'attendances/notice_onemonth' # １ヶ月勤怠申請のお知らせモーダル
       patch 'attendances/update_approve_req_onemonth' # 1ヶ月勤怠の承認
+
     end
     collection do
       post 'import' # csvインポート

@@ -1,0 +1,66 @@
+<% provide(:class_text, 'notice_attendance_change') %>
+<% provide(:button_text, '変更を送信する') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+
+        <%= form_with(model: @user, url: attendances_update_approve_req_attendance_change_user_path(@user), local: true, method: :patch) do |f| %>
+          <div>  
+            <% @request_users.each do |request_user| %>
+              <h4 class="modal-title" style="text-align:center"><%= "【#{request_user.name}からの勤怠変更申請】" %></h4>
+              <table class="table table-bordered table-striped table-position table-hover">
+                <thead>
+                  <tr>
+                    <td>日付</td>
+                    <td><%= "曜日" %></td>
+                    <td><%= "終了予定時間" %></td>
+                    <td><%= "指定勤務終了時間" %></td>
+                    <td><%= "時間外時間" %></td>
+                    <td class="col-sm-5"><%= "業務処理内容" %></td>
+                    <td><%= Attendance.human_attribute_name :overtime_request_status %></td>
+                    <td><%= Attendance.human_attribute_name :approval %></td>
+                    <td><%= "勤怠を確認する" %></td>
+                  </tr>
+                </thead>
+
+                <% @attendance_lists[request_user.id].each do |oa| %>
+                    <%= f.fields_for "attendances[]", oa do |at| %>
+                      <tbody>
+                        <tr>
+                          <td><%= l(oa.worked_on, format: :short) %></td>
+                          <td class='<%= "wday#{oa.worked_on.wday}"%>'>
+                            <%= $days_of_the_week[oa.worked_on.wday] %>
+                          </td>
+                          <td><%= l(oa.end_time, format: :time) %></td>
+                          <td><%= l(request_user.designated_work_end_time, format: :time) %></td>
+                          <td><%= oa.overtime_calculation(request_user.designated_work_end_time) %></td>
+                          <td><%= oa.note %></td>
+                          <td><%= at.select :overtime_request_status, [['申請中','申請中'], ['なし','なし'], ['承認','承認'], ['否認','否認']], selected: "申請中" %></td>
+                          <td><%= at.check_box :approval %></td>
+                          <td><%= link_to "確認", user_path(request_user.id), class: "btn btn-primary" %></td>                    
+                        </tr>
+                      </tbody>
+                    <% end %>
+
+                <% end %>
+              </table>
+            <% end %>
+          </div>
+          <!-- 変更送信ボタン -->
+          <div>         
+            <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+          </div>
+        <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

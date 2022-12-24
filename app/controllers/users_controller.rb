@@ -20,6 +20,7 @@ class UsersController < ApplicationController
     @superiors = User.where(superior: true).where.not(id: @user.id)
     @req_overtime_quantity = Attendance.where(overtime_request_status: "申請中", confirmer: @user.name).count
     @req_onemonth_quantity = Attendance.where(onemonth_request_status: "申請中", onemonth_confirmer: @user.name).count
+    @req_attendance_change_quantity = Attendance.where(attendance_change_request_status: "申請中", attendance_change_confirmer: @user.name).count
   end
   
   def new
