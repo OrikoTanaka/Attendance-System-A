@@ -45,7 +45,6 @@ class Attendance < ApplicationRecord
         attendance = Attendance.find(id)
         if item[:approval] == "1"# itemはハッシュなので、キーを指定することになる。そのためにはこの記述[]の仕方をする
           if item[:overtime_request_status] == "承認"
-            #attendance.overtime_request_status == "承認"
             attendance.finished_at = attendance.end_time
             attendance.nextday = false
             attendance.approval = false

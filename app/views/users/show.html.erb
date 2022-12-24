@@ -93,7 +93,11 @@
     <tbody>   
       <% @attendances.each do |day| %>
         <tr>
-          <td><%= link_to "残業申請", request_overtime_user_attendance_path(@user, day), remote: true, class: "btn btn-primary" %></td>
+          <td>
+            <% if current_user?(@user) %>
+              <%= link_to "残業申請", request_overtime_user_attendance_path(@user, day), remote: true, class: "btn btn-primary" %>
+            <% end %>
+          </td>
           <td><%= l(day.worked_on, format: :short) %></td>
           <td class='<%= "wday#{day.worked_on.wday}"%>'>
             <%= $days_of_the_week[day.worked_on.wday] %>
@@ -101,8 +105,10 @@
           <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
           <td><%= l(day.started_at.floor_to(15.minutes), format: :minute) if day.started_at.present? %></td>
           <td class="col-sm-2">
-            <% if btn_text = attendance_state(day) %>
-              <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+            <% if current_user?(@user) %>
+              <% if btn_text = attendance_state(day) %>
+                <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+              <% end %>
             <% end %>
           </td>
           <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
@@ -148,24 +154,26 @@
         <td colspan="5"></td>
         <!-- １ヶ月分の勤怠申請 -->
         <td>
-          <%= form_with(model: @user, url: attendances_request_onemonth_user_path(@user), local: true, method: :patch) do |f| %>
-            <%= f.fields_for "attendances[]", @attendance do |attendance| %>
-              <% if @attendance.onemonth_request_status.nil? %>                
-                所属長承認 未<br>
-              <% elsif @attendance.onemonth_request_status == "申請中" %>
-                <%= @attendance.onemonth_confirmer %>へ申請中<br>
-              <% elsif @attendance.onemonth_request_status == "承認"%>
-                承認済<br>
-              <% elsif @attendance.onemonth_request_status == "否認" %>
-                勤怠否認<br>
-              <% elsif @attendance.onemonth_request_status == "なし" %>
-                所属長承認　未<br>
+          <% if current_user?(@user) %>
+            <%= form_with(model: @user, url: attendances_request_onemonth_user_path(@user), local: true, method: :patch) do |f| %>
+              <%= f.fields_for "attendances[]", @attendance do |attendance| %>
+                <% if @attendance.onemonth_request_status.nil? %>                
+                  所属長承認 未<br>
+                <% elsif @attendance.onemonth_request_status == "申請中" %>
+                  <%= @attendance.onemonth_confirmer %>へ申請中<br>
+                <% elsif @attendance.onemonth_request_status == "承認"%>
+                  <%= @attendance.onemonth_confirmer %>より当月勤怠承認済<br>
+                <% elsif @attendance.onemonth_request_status == "否認" %>
+                  <%= @attendance.onemonth_confirmer %>より当月勤怠否認<br>
+                <% elsif @attendance.onemonth_request_status == "なし" %>
+                  所属長承認　未<br>
+                <% end %>
+                <!-- 上長選択 -->
+                <%= attendance.select :onemonth_confirmer, @superiors.map{ |superior| [superior.name] }, include_blank: "" %>
               <% end %>
-              <!-- 上長選択 -->
-              <%= attendance.select :onemonth_confirmer, @superiors.map{ |superior| [superior.name] }, include_blank: "" %>
+              <!-- 申請ボタン -->
+              <%= f.submit "申請", class: "btn btn-primary btn-block btn-onemonth" %>
             <% end %>
-            <!-- 申請ボタン -->
-            <%= f.submit "申請", class: "btn btn-primary btn-block btn-onemonth" %>
           <% end %>
         </td>
       </tr>

@@ -115,7 +115,15 @@ class AttendancesController < ApplicationController
   
   # １ヶ月の勤怠申請の承認
   def update_approve_req_onemonth
-
+    notice_onemonth_params.each do |id, item|
+      attendance = Attendance.find(id)
+      if item[:onemonth_approval] == "1"
+        attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
+        attendance.save! #ここで↑で更新した値をレコードに保存
+        flash[:success] = "１ヶ月の勤怠申請の変更を送信しました。"
+      end  
+    end
+    redirect_to user_url(current_user)
   end
 
   private
@@ -138,4 +146,9 @@ class AttendancesController < ApplicationController
       def request_onemonth_params
         params.require(:user).permit(attendances: [:onemonth_confirmer, :onemonth_request_status])[:attendances]
       end
+
+    # 1ヶ月の勤怠申請の承認情報
+     def notice_onemonth_params
+      params.require(:user).permit(attendances: [:onemonth_request_status, :onemonth_approval])[:attendances]
+     end
 end

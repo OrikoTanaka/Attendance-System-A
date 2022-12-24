@@ -89,3 +89,16 @@
   }
 }
 
+/* １ヶ月勤怠申請のお知らせ */
+
+.notice-onemonth {
+  color: red;
+  text-decoration: none;
+  display:flex;
+
+  span {
+    border: solid 1px red;
+    font-weight: bold;
+  }
+}
+
