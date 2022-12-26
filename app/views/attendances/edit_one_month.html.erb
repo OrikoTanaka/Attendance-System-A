@@ -21,12 +21,27 @@
             <tr>
               <td><%= l(day.worked_on, format: :short) %></td>
               <td><%= $days_of_the_week[day.worked_on.wday] %></td>
-              <% if !current_user.admin? && (Date.current < day.worked_on) %>
+              <!-- 未来の時間は入力不可 -->
+              <% if Date.current < day.worked_on %>
                 <td><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
                 <td><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>
               <% else %>
-                <td><%= attendance.time_field :started_at, class: "form-control" %></td>
-                <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
+                <td>
+                  <% if day.started_at.present? %>
+                    <% day.started_at_after_change = day.started_at %>
+                      <%= attendance.time_field :started_at_after_change, class: "form-control" %>
+                  <% else %>
+                    <%= attendance.time_field :started_at_after_change, class: "form-control" %>
+                  <% end %>
+                </td>
+                <td>
+                  <% if day.finished_at.present? %>
+                    <% day.finished_at_after_change = day.finished_at %>
+                      <%= attendance.time_field :finished_at_after_change, class: "form-control" %>
+                  <% else %>
+                    <%= attendance.time_field :finished_at_after_change, class: "form-control" %>
+                  <% end %>
+                </td>
               <% end %>
               <td><%= attendance.check_box :nextday %></td>
               <td>

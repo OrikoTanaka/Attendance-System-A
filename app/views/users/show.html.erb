@@ -34,6 +34,7 @@
     <% else %>
       <%= "【 所属長承認申請のお知らせ 】" %><br>
     <% end %>
+
      <!-- 勤怠変更申請のお知らせ -->
     <% if @req_attendance_change_quantity > 0 %>
       <div class="notice-attendance_change">
@@ -43,6 +44,7 @@
     <% else %>
       <%= "【 勤怠変更申請のお知らせ 】" %><br>
     <% end %>
+    
       <!-- 残業申請のお知らせ -->
     <% if @req_overtime_quantity > 0 %>
       <div class="notice-overtime">
