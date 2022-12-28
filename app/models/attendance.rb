@@ -62,4 +62,27 @@ class Attendance < ApplicationRecord
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     false # 保存（バリデーションに引っ掛かるなども）に失敗したらfalseを返す
   end
+
+  # 勤怠の出社・退社時間等の更新
+  def self.attendance_time_update(notice_attendance_change_params)
+    ActiveRecord::Base.transaction do
+      notice_attendance_change_params.each do |id, item|
+        attendance = Attendance.find(id)
+        if item[:attendance_change_approval] == "1"# itemはハッシュなので、キーを指定することになる。そのためにはこの記述[]の仕方をする
+          if item[:attendance_change_request_status] == "承認"
+            attendance.started_at = attendance.started_at_after_change
+            attendance.finished_at = attendance.finished_at_after_change
+          else item[:attendance_change_request_status] == "否認" || "なし"
+            attendance.started_at_after_change = nil
+            attendance.finished_at_after_change = nil
+          end
+          attendance.attributes = item
+          attendance.save!
+        end
+      end
+    end
+    true # トランザクションで保存に成功した場合、trueを返す
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    false # 保存（バリデーションに引っ掛かるなども）に失敗したらfalseを返す
+  end
 end

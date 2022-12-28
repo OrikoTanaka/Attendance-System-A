@@ -57,7 +57,12 @@ class AttendancesController < ApplicationController
 
   # 勤怠の変更申請の承認
   def update_approve_req_attendance_change
-
+    if Attendance.attendance_time_update(notice_attendance_change_params)
+      flash[:success] = "変更を送信しました。"
+    else
+      flash[:danger] = "変更に失敗しました。やり直してください。"
+    end
+    redirect_to user_url(current_user)
   end
 
   # 残業申請フォーム
@@ -143,9 +148,14 @@ class AttendancesController < ApplicationController
   end
 
   private
-    # 1ヶ月分の勤怠情報を扱います。
+    # 勤怠編集情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :started_at_after_change, :finished_at_after_change, :note, :attendance_change_confirmer, :attendance_change_approval, :attendance_change_request_status])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :started_at_after_change, :finished_at_after_change, :nextday, :note, :attendance_change_confirmer, :attendance_change_request_status])[:attendances]
+    end
+
+    # 勤怠編集承認情報
+    def notice_attendance_change_params
+      params.require(:user).permit(attendances: [:attendance_change_approval, :attendance_change_request_status])[:attendances]
     end
 
     # 残業申請情報

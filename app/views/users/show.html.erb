@@ -125,7 +125,7 @@
           <td></td>
           <td>
             <% if day.started_at.present? && day.finished_at.present? %>
-              <%= str_times = working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+              <%= str_times = working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes), day.nextday) %>
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %>
           </td>
@@ -146,6 +146,17 @@
             <% elsif day.overtime_request_status == "否認"%>
               残業否認<br>
             <% elsif day.overtime_request_status == "なし"%>
+              <%= "" %>
+            <% end %>
+            <% if day.attendance_change_request_status == "申請中"%>
+              <% if day.attendance_change_confirmer.present? %>
+                <%= day.attendance_change_confirmer %>へ申請中<br>
+              <% end %>
+            <% elsif day.attendance_change_request_status == "承認" %>
+              勤怠編集承認済<br>
+            <% elsif day.attendance_change_request_status == "否認"%>
+              勤怠編集否認<br>
+            <% elsif day.attendance_change_request_status == "なし"%>
               <%= "" %>
             <% end %>
           </td>
