@@ -37,7 +37,7 @@
 
      <!-- 勤怠変更申請のお知らせ -->
     <% if @req_attendance_change_quantity > 0 %>
-      <div class="notice-attendance_change">
+      <div class="notice-attendance-change">
         <%= link_to "【 勤怠変更申請のお知らせ 】", attendances_notice_attendance_change_user_path(current_user), remote: true, style:"color:#f00" %>
         <span><%= @req_attendance_change_quantity %>件の通知があります</span>
       </div><br>
@@ -140,7 +140,7 @@
           <td><%= day.overtime_reason %></td>
           <td>
             <% if day.overtime_request_status == "申請中" %>
-              <%= day.confirmer %>へ申請中<br>
+              <%= day.confirmer %>へ残業申請中<br>
             <% elsif day.overtime_request_status == "承認" %>
               残業承認済<br>
             <% elsif day.overtime_request_status == "否認"%>
@@ -150,12 +150,12 @@
             <% end %>
             <% if day.attendance_change_request_status == "申請中"%>
               <% if day.attendance_change_confirmer.present? %>
-                <%= day.attendance_change_confirmer %>へ申請中<br>
+                <%= day.attendance_change_confirmer %>へ勤怠変更申請中<br>
               <% end %>
             <% elsif day.attendance_change_request_status == "承認" %>
-              勤怠編集承認済<br>
+              勤怠変更承認済<br>
             <% elsif day.attendance_change_request_status == "否認"%>
-              勤怠編集否認<br>
+              勤怠変更否認<br>
             <% elsif day.attendance_change_request_status == "なし"%>
               <%= "" %>
             <% end %>

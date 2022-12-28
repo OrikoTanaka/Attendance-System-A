@@ -102,3 +102,16 @@
   }
 }
 
+/* 勤怠変更申請のお知らせ */
+
+.notice-attendance-change {
+  color: red;
+  text-decoration: none;
+  display:flex;
+
+  span {
+    border: solid 1px red;
+    font-weight: bold;
+  }
+}
+

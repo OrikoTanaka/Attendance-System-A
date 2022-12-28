@@ -52,6 +52,7 @@ class Attendance < ApplicationRecord
             attendance.end_time = nil
             attendance.nextday = false
             attendance.approval = false
+            attendance.overtime_reason = nil
           end
           attendance.attributes = item
           attendance.save!
@@ -72,9 +73,12 @@ class Attendance < ApplicationRecord
           if item[:attendance_change_request_status] == "承認"
             attendance.started_at = attendance.started_at_after_change
             attendance.finished_at = attendance.finished_at_after_change
+            attendance.attendance_change_approval = false
           else item[:attendance_change_request_status] == "否認" || "なし"
             attendance.started_at_after_change = nil
             attendance.finished_at_after_change = nil
+            attendance.note = nil
+            attendance.attendance_change_approval = false
           end
           attendance.attributes = item
           attendance.save!
