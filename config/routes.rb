@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       patch 'attendances/request_onemonth' # １ヶ月勤怠申請送信
       get 'attendances/notice_onemonth' # １ヶ月勤怠申請のお知らせモーダル
       patch 'attendances/update_approve_req_onemonth' # 1ヶ月勤怠の承認
+      get 'attendances/attendance_log' # 勤怠ログページ
 
     end
     collection do

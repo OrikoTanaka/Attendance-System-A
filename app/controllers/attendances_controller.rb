@@ -147,6 +147,10 @@ class AttendancesController < ApplicationController
     redirect_to user_url(current_user)
   end
 
+  def attendance_log
+    
+  end
+
   private
     # 勤怠編集情報を扱います。
     def attendances_params
