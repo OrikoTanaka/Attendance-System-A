@@ -1,16 +1,11 @@
 <% provide(:title, "勤怠ログ") %>
 <h1>勤怠ログ</h1>
 
-<div>
+<div class="container">
   <div>
     <tr>
-      <td>年</td>
-      <td></td>
+      <td><%= l(@first_day, format: :middle) %></td>
     <tr>
-    <tr>
-      <td>月</td>
-      <td></td>
-    </tr>
   </div>
   <table class="table table-bordered table-condensed log-table">  
     <tr>
@@ -23,6 +18,9 @@
       <td>承認日</td>
     </tr>
     <tr>
+      <% @attendances.each do |day| %>
+
+      <% end %>
     </tr>
   </table>
 </div>

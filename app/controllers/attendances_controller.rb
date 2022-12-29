@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime, :notice_onemonth, :notice_attendance_change]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime, :notice_onemonth, :notice_attendance_change, :attendance_log]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month 
@@ -63,6 +63,12 @@ class AttendancesController < ApplicationController
       flash[:danger] = "変更に失敗しました。やり直してください。"
     end
     redirect_to user_url(current_user)
+  end
+
+  # 勤怠ログ
+  def attendance_log
+    @first_day = params[:date].nil? ? Date.current.beginning_of_month : params[:date].to_date
+    @attendances = Attendance.where(attendance_change_request_status: "承認", user_id: @user.id).order(:worked_on)
   end
 
   # 残業申請フォーム
@@ -147,9 +153,7 @@ class AttendancesController < ApplicationController
     redirect_to user_url(current_user)
   end
 
-  def attendance_log
-    
-  end
+  
 
   private
     # 勤怠編集情報を扱います。
