@@ -3,9 +3,15 @@
 
 <div class="container">
   <div>
-    <tr>
-      <td><%= l(@first_day, format: :middle) %></td>
-    <tr>
+    <% form_with model: @attendances, method: :get, url: attendances_attendance_log_user_path do |f| %>
+      <%= f.date_select :select_year,
+        { end_year: Time.now.year, prompt: "年", discard_month: "true", discard_day: "true" },
+        { id: "log-sch", class: "form-control form-sch" } %>
+      <%= f.date_select :select_month,
+        { use_month_numbers: true, prompt: "月", discard_year: "true", discard_day: "true" },
+        { id: "log-sch", class: "form-control form-sch" } %>
+      <%= f.submit "検索", class: 'btn' %>
+    <% end %>
   </div>
   <table class="table table-bordered table-condensed log-table">  
     <tr>
