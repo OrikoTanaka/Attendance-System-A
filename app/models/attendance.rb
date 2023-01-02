@@ -71,6 +71,8 @@ class Attendance < ApplicationRecord
         attendance = Attendance.find(id)
         if item[:attendance_change_approval] == "1"# itemはハッシュなので、キーを指定することになる。そのためにはこの記述[]の仕方をする
           if item[:attendance_change_request_status] == "承認"
+            attendance.started_at_first = attendance.started_at
+            attendance.finished_at_first = attendance.finished_at
             attendance.started_at = attendance.started_at_after_change
             attendance.finished_at = attendance.finished_at_after_change
             attendance.attendance_change_approval = false

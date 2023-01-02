@@ -2,31 +2,44 @@
 <h1>勤怠ログ</h1>
 
 <div class="container">
-  <div>
-    <% form_with model: @attendances, method: :get, url: attendances_attendance_log_user_path do |f| %>
-      <%= f.date_select :select_year,
-        { end_year: Time.now.year, prompt: "年", discard_month: "true", discard_day: "true" },
-        { id: "log-sch", class: "form-control form-sch" } %>
-      <%= f.date_select :select_month,
-        { use_month_numbers: true, prompt: "月", discard_year: "true", discard_day: "true" },
-        { id: "log-sch", class: "form-control form-sch" } %>
-      <%= f.submit "検索", class: 'btn' %>
-    <% end %>
-  </div>
-  <table class="table table-bordered table-condensed log-table">  
-    <tr>
-      <td>日付</td>
-      <td>変更前出社時間</td>
-      <td>変更前退社時間</td>
-      <td>変更後出社時間</td>
-      <td>変更後退社時間</td>
-      <td>指示者</td>
-      <td>承認日</td>
-    </tr>
-    <tr>
-      <% @attendances.each do |day| %>
-
+  <div class="row">
+    <div>
+      <% form_with url: attendances_attendance_log_user_path(@attendances), method: :get do |f| %>
+        <%= f.date_select :select_year,
+          { end_year: Time.now.year, prompt: "年", discard_month: "true", discard_day: "true" },
+          { id: "log-sch", class: "form-control form-sch" } %>
+        <%= f.date_select :select_month,
+          { use_month_numbers: true, prompt: "月", discard_year: "true", discard_day: "true" },
+          { id: "log-sch", class: "form-control form-sch" } %>
+        <%= f.submit "検索", class: 'btn' %>
       <% end %>
-    </tr>
-  </table>
+    </div>
+    <table class="table table-bordered table-condensed log-table">
+      <thead>
+        <tr>
+          <td>日付</td>
+          <td>変更前出社時間</td>
+          <td>変更前退社時間</td>
+          <td>変更後出社時間</td>
+          <td>変更後退社時間</td>
+          <td>指示者</td>
+          <td>承認日</td>
+        </tr>
+      </thead>
+
+      <% @attendances.each do |day| %>
+        <tbody>
+          <tr>
+            <td><%= l(day.worked_on, format: :short) %></td>
+            <td><%= day.started_at_first.try(:strftime, "%H:%M") %></td>
+            <td><%= day.finished_at_first.try(:strftime, "%H:%M") %></td>
+            <td><%= l(day.started_at_after_change, format: :time) %></td>
+            <td><%= l(day.finished_at_after_change, format: :time) %></td>
+            <td><%= day.attendance_change_confirmer %></td>
+            <td><%= day.updated_at.strftime("%Y年%m月%d日") %></td>
+          </tr>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
 </div>

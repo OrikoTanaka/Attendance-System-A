@@ -1,5 +1,6 @@
 class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime, :notice_onemonth, :notice_attendance_change, :attendance_log]
+  before_action :set_user_id, only: [:update, :request_overtime, :update_request_overtime, :request_onemonth]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month 
@@ -7,7 +8,7 @@ class AttendancesController < ApplicationController
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
 
   def update
-    @user = User.find(params[:user_id])
+    #@user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
     # 出勤時間が未登録であることを判定します。
     if @attendance.started_at.nil?
@@ -73,14 +74,14 @@ class AttendancesController < ApplicationController
 
   # 残業申請フォーム
   def request_overtime
-    @user = User.find(params[:user_id])
+    #@user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
     @superiors = User.where(superior: true).where.not(id: @user.id)
   end
 
   # 残業申請送信
   def update_request_overtime
-    @user = User.find(params[:user_id])
+    #@user = User.find(params[:user_id])
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       request_overtime_params.each do |id, item|
         attendance = Attendance.find(id)
@@ -117,7 +118,7 @@ class AttendancesController < ApplicationController
 
   # １ヶ月の勤怠の申請
   def request_onemonth
-    @user = User.find(params[:id])
+    #@user = User.find(params[:id])
     if request_onemonth_params.present?
       request_onemonth_params.each do |id,item|
         attendance = Attendance.find(id)
