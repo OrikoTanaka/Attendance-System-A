@@ -64,6 +64,27 @@ class Attendance < ApplicationRecord
     false # 保存（バリデーションに引っ掛かるなども）に失敗したらfalseを返す
   end
 
+  # 勤怠時間の変更申請
+  def self.time_change_request(attendances_params)
+    ActiveRecord::Base.transaction do # トランザクションを開始します。
+      attendances_params.each do |id, item|
+        attendance = Attendance.find(id)
+        attendance.attendance_change_request_status = "申請中"
+        if attendance.started_at.blank?
+          attendance.started_at_first = attendance.started_at
+        end
+        if attendance.finished_at.blank?
+          attendance.finished_at_first = attendance.finished_at
+        end
+        attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
+        attendance.save!(context: :update_one_month) #ここで↑で更新した値をレコードに保存(同時にバリデーションを実行)
+      end
+    end
+    true # トランザクションで保存に成功した場合、trueを返す
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    false # 保存（バリデーションに引っ掛かるなども）に失敗したらfalseを返す
+  end
+
   # 勤怠の出社・退社時間等の更新
   def self.attendance_time_update(notice_attendance_change_params)
     ActiveRecord::Base.transaction do
