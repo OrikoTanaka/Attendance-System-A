@@ -4,29 +4,29 @@ class Attendance < ApplicationRecord
   validates :worked_on, presence: true
   validates :note, length: { maximum: 50 }
   validates :end_time, :overtime_reason, :confirmer, presence: true, on: :update_request_overtime
-  
+  validates :onemonth_confirmer, presence: true, on: :request_onemonth
 
-  # 出勤時間が存在しない場合、退勤時間は無効
-  validate :finished_at_is_invalid_without_a_started_at
+  # 指示者確認印があり出勤時間が存在しない場合、退勤時間は無効
+  validate :finished_at_after_change_is_invalid_without_a_started_at_after_change
   
-  # 出勤・退勤時間どちらも存在する時、翌日チェックがない時,出勤時間より早い退勤時間は無効
-  validate :started_at_than_finished_at_fast_if_invalid
+  # 出勤・退勤時間どちらも存在する時、翌日チェックがない時,指示者確認印がある時、出勤時間より早い退勤時間は無効
+  validate :started_at_after_change_than_finished_at_after_change_fast_if_invalid
 
   # 出勤時間が存在、退勤時間が存在しない時、更新は無効
-  validate :started_at_is_invalid_withiout_a_finished_at, on: :update_one_month # update_one_monthのアクション実行の時のみバリデーションをかける
+  validate :started_at_after_change_is_invalid_withiout_a_finished_at_after_change, on: :update_one_month # update_one_monthのアクション実行の時のみバリデーションをかける
 
-  def finished_at_is_invalid_without_a_started_at
-    errors.add(:started_at, "が必要です") if started_at.blank? && finished_at.present?
+  def finished_at_after_change_is_invalid_without_a_started_at_after_change
+    errors.add(:started_at_after_change, "が必要です") if started_at_after_change.blank? && finished_at_after_change.present? && attendance_change_confirmer.present?
   end
 
-  def started_at_than_finished_at_fast_if_invalid
-    if started_at.present? && finished_at.present? && !nextday.present?
-      errors.add(:finished_at, "出勤時間より早い退勤時間は無効です") if started_at > finished_at
+  def started_at_after_change_than_finished_at_after_change_fast_if_invalid
+    if started_at_after_change.present? && finished_at_after_change.present? && !nextday.present? && attendance_change_confirmer.present?
+      errors.add(:finished_at_after_change, "出勤時間より早い退勤時間は無効です") if started_at_after_change > finished_at_after_change
     end
   end
 
-  def started_at_is_invalid_withiout_a_finished_at
-    errors.add(:finished_at, "が必要です") if started_at.present? && finished_at.blank?
+  def started_at_after_change_is_invalid_withiout_a_finished_at_after_change
+    errors.add(:finished_at_after_change, "が必要です") if started_at_after_change.present? && finished_at_after_change.blank? && attendance_change_confirmer.present?
   end
 
     # 残業終了時間と指定勤務終了時間を受け取り、残業時間を計算して返します。
@@ -70,10 +70,10 @@ class Attendance < ApplicationRecord
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
         attendance.attendance_change_request_status = "申請中"
-        if attendance.started_at.blank?
+        if item[:started_at] = nil?
           attendance.started_at_first = attendance.started_at
         end
-        if attendance.finished_at.blank?
+        if item[:finished_at] = nil?
           attendance.finished_at_first = attendance.finished_at
         end
         attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)

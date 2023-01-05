@@ -45,7 +45,7 @@
                           <td><%= oa.overtime_reason %></td>
                           <td><%= at.select :overtime_request_status, [['申請中','申請中'], ['なし','なし'], ['承認','承認'], ['否認','否認']], selected: "申請中" %></td>
                           <td><%= at.check_box :approval %></td>
-                          <td><%= link_to "確認", user_path(request_user.id), class: "btn btn-primary" %></td>                    
+                          <td><%= link_to "確認", user_path(request_user.id, date: oa.worked_on.beginning_of_month), class: "btn btn-primary" %></td>                    
                         </tr>
                       </tbody>
                     <% end %>

@@ -1,6 +1,6 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime, :notice_onemonth, :notice_attendance_change, :attendance_log]
-  before_action :set_user_id, only: [:update, :request_overtime, :update_request_overtime, :request_onemonth]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :notice_overtime, :update_approve_req_overtime, :request_onemonth, :notice_onemonth, :notice_attendance_change, :attendance_log]
+  before_action :set_user_id, only: [:update, :request_overtime, :update_request_overtime]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month 
@@ -33,20 +33,29 @@ class AttendancesController < ApplicationController
  
   # 勤怠の変更の申請
   def update_one_month
-    ActiveRecord::Base.transaction do # トランザクションを開始します。
-      attendances_params.each do |id, item|
-        attendance = Attendance.find(id)
-        attendance.attendance_change_request_status = "申請中"
-        attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
-        attendance.save!(context: :update_one_month) #ここで↑で更新した値をレコードに保存(同時にバリデーションを実行)
-      end
+    if Attendance.time_change_request(attendances_params)
+      flash[:success] = "勤怠の変更を申請しました。"
+      redirect_to user_url(date: params[:date])
+    else
+      flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+      redirect_to attendances_edit_one_month_user_url(date: params[:date])
     end
-    flash[:success] = "勤怠の変更を申請しました。"
-    redirect_to user_url(date: params[:date])
-  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-    redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
+  # def update_one_month
+  #   ActiveRecord::Base.transaction do # トランザクションを開始します。
+  #     attendances_params.each do |id, item|
+  #       attendance = Attendance.find(id)
+  #       attendance.attendance_change_request_status = "申請中"
+  #       attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
+  #       attendance.save!(context: :update_one_month) #ここで↑で更新した値をレコードに保存(同時にバリデーションを実行)
+  #     end
+  #   end
+  #   flash[:success] = "勤怠の変更を申請しました。"
+  #   redirect_to user_url(date: params[:date])
+  # rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+  #   flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+  #   redirect_to attendances_edit_one_month_user_url(date: params[:date])
+  # end
 
   # 勤怠の変更のお知らせモーダル
   def notice_attendance_change
@@ -117,20 +126,18 @@ class AttendancesController < ApplicationController
 
   # １ヶ月の勤怠の申請
   def request_onemonth
-    #@user = User.find(params[:id])
-    if request_onemonth_params.present?
-      request_onemonth_params.each do |id,item|
+    request_onemonth_params.each do |id,item|
+      unless item[:onemonth_confirmer].blank?
         attendance = Attendance.find(id)
-          attendance.onemonth_request_status = "申請中"
-          attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
-          attendance.save!
+        attendance.onemonth_request_status = "申請中"
+        attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
+        attendance.save!
+        flash[:success] = "1ヶ月の勤怠を申請しました。"
+      else
+        flash[:danger] = "所属長を選択してください。" 
       end
-      flash[:success] = "1ヶ月の勤怠を申請しました。"
-      redirect_to user_url(current_user)
-    else
-      flash[:danger] = "所属長を選択してください。"
-      redirect_to user_url(current_user)
     end
+    redirect_to user_url(current_user)
   end
 
   # １ヶ月の勤怠申請のお知らせモーダル
