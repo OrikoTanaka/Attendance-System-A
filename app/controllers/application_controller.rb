@@ -42,6 +42,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # 管理者は勤怠画面の表示と編集は不可
+  def admin_impossible
+    if current_user.admin?
+      flash[:danger] = "権限がありません。"
+      redirect_to root_url
+    end
+  end
+
   # ページ出力前に1ヶ月分のデータの存在を確認・セットします。
   def set_one_month 
     @first_day = if params[:date].nil? #この５行を１行にできる→ @first_day = params[:date].nil? ? Date.current.beginning_of_month : params[:date].to_date

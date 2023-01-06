@@ -3,6 +3,7 @@ class AttendancesController < ApplicationController
   before_action :set_user_id, only: [:update, :request_overtime, :update_request_overtime]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
+  before_action :admin_impossible, oonly: :edit_one_month
   before_action :set_one_month, only: :edit_one_month 
   
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
@@ -41,21 +42,6 @@ class AttendancesController < ApplicationController
       redirect_to attendances_edit_one_month_user_url(date: params[:date])
     end
   end
-  # def update_one_month
-  #   ActiveRecord::Base.transaction do # トランザクションを開始します。
-  #     attendances_params.each do |id, item|
-  #       attendance = Attendance.find(id)
-  #       attendance.attendance_change_request_status = "申請中"
-  #       attendance.attributes = item #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
-  #       attendance.save!(context: :update_one_month) #ここで↑で更新した値をレコードに保存(同時にバリデーションを実行)
-  #     end
-  #   end
-  #   flash[:success] = "勤怠の変更を申請しました。"
-  #   redirect_to user_url(date: params[:date])
-  # rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-  #   flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-  #   redirect_to attendances_edit_one_month_user_url(date: params[:date])
-  # end
 
   # 勤怠の変更のお知らせモーダル
   def notice_attendance_change
@@ -82,7 +68,6 @@ class AttendancesController < ApplicationController
 
   # 残業申請フォーム
   def request_overtime
-    #@user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
     @superiors = User.where(superior: true).where.not(id: @user.id)
   end

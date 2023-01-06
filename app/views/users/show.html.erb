@@ -27,7 +27,7 @@
 </div>
 
 <!--各種 申請お知らせテーブル-->
-<% if current_user.superior? %>
+<% if current_user.superior? && current_user?(@user) %>
   <div class="row">
   <!-- 所属長承認申請のお知らせ -->
     <% if @req_onemonth_quantity > 0 %>
@@ -61,13 +61,15 @@
   </div>
 <% end %>
 
-<div class="btn-users-show">
-  <%= link_to "勤怠編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
-  <%= link_to "CSV出力", user_path(format: :csv), class: "btn btn-primary" %>
-  <p>
-  <p>
-  <%= link_to "勤怠修正ログ(承認済)", attendances_attendance_log_user_path(current_user), class: "btn btn-primary" %>
-</div>
+<% if current_user?(@user) %>
+  <div class="btn-users-show">
+    <%= link_to "勤怠編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
+    <%= link_to "CSV出力", user_path(format: :csv), class: "btn btn-primary" %>
+    <p>
+    <p>
+    <%= link_to "勤怠修正ログ(承認済)", attendances_attendance_log_user_path(current_user), class: "btn btn-primary" %>
+  </div>
+<% end %>
 <div>
   <table class="table table-bordered table-condensed table-hover" id="table-attendances">
     <thead>

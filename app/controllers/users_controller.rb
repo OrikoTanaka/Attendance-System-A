@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:index, :edit_user_info, :update_user_info, :destroy]
+  before_action :admin_impossible, only: :show
   before_action :set_one_month, only: :show
 
   def index
@@ -15,9 +16,6 @@ class UsersController < ApplicationController
   end
  
   def show
-    if current_user.admin?
-      redirect_to root_url
-    end
     @worked_sum = @attendances.where.not(started_at: nil).count
     @attendance = @user.attendances.find_by(worked_on: @first_day)
     @superiors = User.where(superior: true).where.not(id: @user.id)
@@ -115,13 +113,13 @@ class UsersController < ApplicationController
         attendances.each do |day|
           column_values = [
             day.worked_on.strftime("%Y年%m月%d日(#{$days_of_the_week[day.worked_on.wday]})"),
-            if day.started_at.present? && (day.attendance_change_request_status == "承認").present?
-              l(day.started_at, format: :time)
+            if day.started_at.present? || (day.attendance_change_request_status == "承認").present?
+              l(day.started_at.floor_to(15.minutes), format: :time)
             else
               nil
             end,
-            if day.finished_at.present? && (day.attendance_change_request_status == "承認").present?
-              l(day.finished_at, format: :time)
+            if day.finished_at.present? || (day.attendance_change_request_status == "承認").present?
+              l(day.finished_at.floor_to(15.minutes), format: :time)
             else
               nil
             end
